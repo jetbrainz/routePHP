@@ -64,5 +64,5 @@ fi
 </pre>
 
 <pre>
-*/1 * * * * root /bin/bash /path/to/scheduler_daemon.sh >> /var/log/scheduler_cron.log 2>&1
+*/1 * * * * root /bin/bash /path/to/scheduler.sh >> /var/log/scheduler_cron.log 2>&1
 </pre>
