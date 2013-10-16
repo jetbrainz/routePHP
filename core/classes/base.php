@@ -78,5 +78,18 @@ class Base extends Config
 	public function queueRun($task)
 	{
 		;
-	}	
+	}
+	
+	public function isConstant($param) {
+		$ref = new ReflectionClass($this);
+		$const = $ref->getConstants();
+		$ret = false;
+		foreach ($const as $con=>$val) {
+			if ($param == $val) {
+				$ret = true;
+				break;
+			}
+		}
+		return $ret;
+	}
 }
