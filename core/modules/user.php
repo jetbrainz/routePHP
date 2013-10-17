@@ -7,18 +7,28 @@
  */
 class User extends Base
 {
-	private $userInfo=null;
-	private $restrictedFields = array (
+	const DOC_ID = 'id';
+	const DOC_ADDRESS = 'address';
+	const DOC_CARD = 'card';
+	const DOC_OTHER = 'other';
+	const S_NEW = 'new';
+	const S_PENDING = 'pending';
+	const S_REJECTED = 'rejected';
+	const S_EXPIRED = 'expired';
+	const S_APPROVED = 'approved';
+	
+	protected $userInfo=null;
+	protected $restrictedFields = array (
 		'id', 'uid', 'deleted', 'verified', 'email',
 		'type', 'created', 'activated', 'completed', 'password_secure'
 	);
-	private $masterFields = array (
+	protected $masterFields = array (
 		'id', 'uid', 'deleted', 'verified',
 		'name', 'email', 'country', 'phone',
 		'lang', 'password', 'password_secure', 'type', 'created',
 		'activated', 'completed'
 	);
-	private $fieldTypes = array (
+	protected $fieldTypes = array (
 		'id' => 'INT',
 		'uid' => 'STR',
 		'deleted' => 'INT',
@@ -34,7 +44,7 @@ class User extends Base
 		'created' => 'STR',
 		'activated' => 'STR',
 	);
-	private $id=null;
+	protected $id=null;
 		
 	public function __construct()
 	{
@@ -204,7 +214,15 @@ class User extends Base
 	 * @param int $modified_by Optional. ID of user who create a document. Null by default.
 	 * @return boolean ID of document on success or false on error
 	 */
-	public function attachFile($id, $name, $file_name, $file_type, $doc_type='other', $expiration=null, $status='new', $modified_by=null) {
+	public function attachFile($id, $name, $file_name, $file_type, $doc_type=self::DOC_OTHER, $expiration=null, $status=self::S_NEW, $modified_by=null) {
+		
+		if (
+			!$this->isConstant($status)
+			|| !$this->isConstant($doc_type)
+		) {
+			return false;
+		}
+		
 		$query = "insert into documents 
 			(user_id, name, file_name, file_type, doc_type, expiration, status, modified_by)
 			values
@@ -232,6 +250,67 @@ class User extends Base
 		}
 		
 		return $this->db()->lastInsertId();
+	}
+	
+	public function setFileTranslation($uid, $translation)
+	{
+		$query = "update documents set translation=:trans where uid=:uid";
+		
+		if (!$st = $this->db()->prepare($query)) {
+			return false;
+		}
+		
+		$st->bindValue(':trans', $translation, PDO::PARAM_STR);
+		$st->bindValue(':uid', $uid, PDO::PARAM_STR);
+		
+		if (!$st->execute()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function setFileStatus($uid, $status)
+	{
+		if (!$this->isConstant($status)) {
+			return;
+		}
+		$query = "update documents set status=:status where uid=:uid";
+		
+		if (!$st = $this->db()->prepare($query)) {
+			return false;
+		}
+		
+		$st->bindValue(':status', $status, PDO::PARAM_STR);
+		$st->bindValue(':uid', $uid, PDO::PARAM_STR);
+		
+		if (!$st->execute()) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function getDocumentByFileName($name)
+	{
+		$query = "select * from documents where file_name=:name";
+		if (!$st = $this->db()->prepare($query)) {
+			return false;
+		}
+		
+		$st->bindValue(':name', $name, PDO::PARAM_STR);
+		
+		if (!$st->execute()) {
+			return false;
+		}
+		
+		$ret = array ();
+		
+		if (!$f=$st->fetch(PDO::FETCH_ASSOC)) {
+			return false;
+		}
+		
+		return $f;
 	}
 	
 	public function getFiles($id)
@@ -758,7 +837,7 @@ class User extends Base
 		return $ret;
 	}
 	
-	private function isUID($id)
+	protected function isUID($id)
 	{
 		if (strlen($id) > 16) {
 			return true;
@@ -767,7 +846,7 @@ class User extends Base
 		}
 	}
 	
-	private function bindID($id)
+	protected function bindID($id)
 	{
 		if ($this->isUID($id)) {
 			return array('id' => 'uid', 'uid' => PDO::PARAM_STR);
