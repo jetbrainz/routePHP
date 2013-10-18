@@ -98,14 +98,14 @@ class Route extends Config
 		$this->before();
 		
 		// Let do some hooks
+		if (!empty($_FILES)) {
+			$this->_FILES();
+		}
 		if (!empty($_GET)) {
 			$this->_GET();
 		}
 		if (!empty($_POST)) {
 			$this->_POST();
-		}
-		if (!empty($_FILES)) {
-			$this->_FILES();
 		}
 		if (\Url::isSuccess()) {
 			$this->_SUCCESS();
