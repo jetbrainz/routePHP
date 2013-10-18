@@ -28,6 +28,17 @@ class Form
 					: 'form'
 				);
 		
+		if (isset($form['form']['enctype'])) {
+			$pfbc->configure(array ('enctype' => $form['form']['enctype']));
+		}
+		
+		if (isset($form['form']['view'])) {
+			$view = "PFBC\\View\\{$form['form']['view']}";
+		} else {
+			$view = "PFBC\\View\\SideBySide";
+		}
+			
+		
 		$pfbc->configure(array(
 			"action" => isset($form['form']['action'])
 							? $form['form']['action']
@@ -41,6 +52,7 @@ class Form
 				'changeMonth' => 'true',
 				'changeYear' => 'true',
 			),
+			"view" => new $view,
 		));
 		
 		if (isset ($form['form']['legend'])) {
@@ -108,3 +120,4 @@ class Form
 	}
 	
 }
+
