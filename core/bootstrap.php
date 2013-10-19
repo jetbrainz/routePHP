@@ -36,6 +36,9 @@ define ('PATH_CORE_UTL', realpath(PATH_CORE.'/utl'));
 define ('PATH_WWW', realpath(PATH_APP.'/www'));
 define ('PATH_VAR', realpath(PATH_APP.'/var'));
 define ('PATH_LOG', realpath(PATH_VAR.'/log'));
+define ('PATH_PROPEL_LIB', PATH_EXT.'/Propel/runtime/lib');
+define ('PATH_PROPEL', PATH_APP.'/propel/build');
+
 define ('DEFAULT_COUNTRY', \Country::getCode('Cyprus'));
 
 define ('LOGGED', \Session::get('logged'));
@@ -45,6 +48,9 @@ define ('LOGGED_EMAIL', \Session::get('logged_email'));
 
 // Include project config
 require_once PATH_APP.'/config.php';
+
+// Include Propel
+require_once PATH_PROPEL_LIB.'/Propel.php';
 
 try
 {
@@ -98,7 +104,7 @@ function MainLoad($className)
 	);
 	
 	$className = strtolower($classNameCase = $className);
-
+	
 	if (!substr($className, 0, 1) != '\\') {
 		$className = '\\' . $className;
 	}
@@ -134,6 +140,8 @@ function ExtLoad($className) {
 	$paths = array (
 		PATH_EXT,
 		PATH_EXT.'/monolog/src',
+		PATH_PROPEL_LIB,
+		PATH_PROPEL.'/classes',
 	);
 	
 	if (!substr($className, 0, 1) != '\\') {
