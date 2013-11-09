@@ -123,10 +123,8 @@ function MainLoad($className)
 		foreach ($paths as $path) {
 			if (file_exists ($path.$dirNameFile.$classNameFile)) {
 				include_once $path.$dirNameFile.$classNameFile;
-				return;
 			} elseif (file_exists ($path.$classNameFile)) {
 				include_once $path.$classNameFile;
-				return;
 			}
 		}
 	}
@@ -153,7 +151,6 @@ function ExtLoad($className) {
 	foreach ($paths as $path) {
 		if (file_exists ($path.$classNameFile)) {
 			include_once $path.$classNameFile;
-			break;
 		}
 	}
 }
