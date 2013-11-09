@@ -3,7 +3,7 @@
 	url = https://github.com/Seldaek/monolog.git
 [submodule "core/ext/pfbc"]
 	path = core/ext/pfbc
-	url = https://github.com/vsnake01/php-form-builder-class.git
+	url = https://github.com/jetbrainz/php-form-builder-class.git
 [submodule "core/ext/Propel"]
 	path = core/ext/Propel
 	url = https://github.com/propelorm/Propel.git
