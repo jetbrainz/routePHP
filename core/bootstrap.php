@@ -110,6 +110,7 @@ function MainLoad($className)
 	}
 	
 	$classNameFile = str_replace ('\\', '/', $className).'.php';
+	$classNameFileNaked = basename($classNameFile);
 	$dirNameFile = str_replace ('\\', '/', $className);
 	
 	if (preg_match ('|^\/routes|', $classNameFile)) {
@@ -125,6 +126,8 @@ function MainLoad($className)
 				include_once $path.$dirNameFile.$classNameFile;
 			} elseif (file_exists ($path.$classNameFile)) {
 				include_once $path.$classNameFile;
+			} elseif (file_exists ($path.'/'.$classNameFileNaked)) {
+				include_once $path.'/'.$classNameFileNaked;
 			}
 		}
 	}
