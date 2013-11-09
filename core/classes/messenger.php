@@ -145,7 +145,12 @@ class Messenger extends Base
 	
 	static function error($str)
 	{
-		\Session::set('message-type', 'alert-error');
+		if (constant('BOOTSTRAP_VERSION') == 3) {
+			\Session::set('message-type', 'alert-danger');
+		} else {
+			\Session::set('message-type', 'alert-error');
+		}
+		
 		\Session::set('message', $str);
 	}
 	
