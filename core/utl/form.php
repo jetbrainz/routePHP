@@ -64,8 +64,35 @@ class Form
 			}
 		}
 		foreach ($form['elements'] as $el) {
+			$Element = 'PFBC\\Element\\' . $el['type'];
+		
+			$objects2ajust = array ('select', 'textbox', 'textarea', 'number', 'password', 'phone', 'email');
+			foreach ($objects2ajust as $on) {
+				if (stristr($Element, $on) !== false) {
+					
+					if (!isset ($el['properties']['class'])) {
+						$el['properties']['class'] = 'form-control';
+					} else {
+						if (!preg_match ('/form-control/', $el['properties']['class'])) {
+							$el['properties']['class'] .= ' form-control';
+						}
+					}
+					break;
+				}
+			}
+		
 			if (!isset($el['properties'])) {
 				$el['properties']['required'] = 1;
+			}
+			if (!isset($form['form']['labelWidth'])) {
+				$el['properties']['labelWidth'] = 2;
+			} elseif ($form['form']['labelWidth']) {
+				$el['properties']['labelWidth'] = $form['form']['labelWidth'];
+			}
+			if (!isset($form['form']['controlWidth'])) {
+				$el['properties']['controlWidth'] = 5;
+			} elseif ($form['form']['controlWidth']) {
+				$el['properties']['controlWidth'] = $form['form']['controlWidth'];
 			}
 			if (isset($el['properties']['required']) && !$el['properties']['required']) {
 				unset ($el['properties']['required']);
@@ -102,7 +129,6 @@ class Form
 						);
 				$p4 = null;
 			}
-			$Element = 'PFBC\\Element\\' . $el['type'];
 			$pfbc->addElement(
 					new $Element (
 						$p1,
