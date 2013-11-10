@@ -34,6 +34,12 @@ class Route extends Config
 		
 		if ($theme = $this->getConfig('theme')) {
 			$this->theme = $theme['name'];
+			if (\Session::get('logged')) {
+				$type = \Session::get('logged_type');
+				if ($type && isset ($theme[$type])) {
+					$this->theme = $theme[$type];
+				}
+			}
 		}
 		
 		$this->token = new Token();
