@@ -17,6 +17,10 @@ class FileStorage
 	 */
 	static public function check($file, $storageName='', $postfix='')
 	{
+		if (!$file) {
+			return false;
+		}
+		
 		$path = self::makePath(substr($file, 0, 32), $storageName);
 		
 		if ($postfix) {
@@ -33,6 +37,10 @@ class FileStorage
 	 */
 	static public function get($file, $storageName='', $postfix='')
 	{
+		if (!$file) {
+			return false;
+		}
+		
 		$path = self::makePath(substr($file, 0, 32), $storageName);
 		if ($postfix) {
 			$file = preg_replace('/\.(\w+)$/', '_'.$postfix.'.$1', $file);
@@ -53,6 +61,10 @@ class FileStorage
 	 */
 	static public function getName($file, $storageName='', $postfix='')
 	{
+		if (!$file) {
+			return false;
+		}
+		
 		$path = self::makePath(substr($file, 0, 32), $storageName);
 		
 		if ($postfix) {
@@ -74,6 +86,10 @@ class FileStorage
 	 */
 	static public function getSize($file, $storageName='', $postfix='')
 	{
+		if (!$file) {
+			return false;
+		}
+		
 		$path = self::makePath(substr($file, 0, 32), $storageName);
 		
 		if ($postfix) {
@@ -95,6 +111,10 @@ class FileStorage
 	 */
 	static public function getMimetype($file, $storageName='', $postfix='')
 	{
+		if (!$file) {
+			return false;
+		}
+		
 		$path = self::makePath(substr($file, 0, 32), $storageName);
 		
 		if ($postfix) {
