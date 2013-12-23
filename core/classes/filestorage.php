@@ -17,7 +17,7 @@ class FileStorage
 	 */
 	static public function check($file, $storageName='', $postfix='')
 	{
-		if (!$file) {
+		if (!$file || !preg_match ('/^[a-z0-9]{32}\.\w+$/', $file)) {
 			return false;
 		}
 		
@@ -37,7 +37,7 @@ class FileStorage
 	 */
 	static public function get($file, $storageName='', $postfix='')
 	{
-		if (!$file) {
+		if (!$file || !preg_match ('/^[a-z0-9]{32}\.\w+$/', $file)) {
 			return false;
 		}
 		
@@ -61,7 +61,7 @@ class FileStorage
 	 */
 	static public function getName($file, $storageName='', $postfix='')
 	{
-		if (!$file) {
+		if (!$file || !preg_match ('/^[a-z0-9]{32}\.\w+$/', $file)) {
 			return false;
 		}
 		
@@ -86,7 +86,7 @@ class FileStorage
 	 */
 	static public function getSize($file, $storageName='', $postfix='')
 	{
-		if (!$file) {
+		if (!$file || !preg_match ('/^[a-z0-9]{32}\.\w+$/', $file)) {
 			return false;
 		}
 		
@@ -111,7 +111,7 @@ class FileStorage
 	 */
 	static public function getMimetype($file, $storageName='', $postfix='')
 	{
-		if (!$file) {
+		if (!$file || !preg_match ('/^[a-z0-9]{32}\.\w+$/', $file)) {
 			return false;
 		}
 		
@@ -156,6 +156,9 @@ class FileStorage
 	static public function createPath($filename, $storageName='', $fileIsKey=false)
 	{
 		if ($fileIsKey) {
+			if (!preg_match ('/^[a-z0-9]{32}\.\w+$/', $filename)) {
+				return false;
+			}
 			$hash = substr($filename, 0, 32);
 			$fileExt = '';
 		} else {
@@ -174,6 +177,9 @@ class FileStorage
 	static public function createFullPath($filename, $storageName='', $fileIsKey=false)
 	{
 		if ($fileIsKey) {
+			if (!preg_match ('/^[a-z0-9]{32}\.\w+$/', $filename)) {
+				return false;
+			}
 			$hash = substr($filename, 0, 32);
 			$fileExt = '';
 		} else {
@@ -199,6 +205,9 @@ class FileStorage
 	static public function create($filename, $content, $storageName='', $fileIsKey=false, $postfix='')
 	{
 		if ($fileIsKey) {
+			if (!preg_match ('/^[a-z0-9]{32}\.\w+$/', $filename)) {
+				return false;
+			}
 			$hash = substr($filename, 0, 32);
 			$fileExt = '';
 		} else {
