@@ -106,6 +106,45 @@ class Messenger extends Base
 		return $ret;
 	}
 	
+	public function statMessagesCount($user_id=null, $type=null, $seen=null, $closed=null)
+	{
+		if ($user_id) {
+			$user_id = intval($user_id);
+			$query = "select count(id) as cnt from messenger where user_id=:user_id";
+		} else {
+			$query = "select count(id) as cnt from messenger where 1=1";
+		}
+		
+		if ($type !== null) {
+			$query .= " and type=:type";
+		}
+		if ($seen !== null) {
+			$query .= " and seen " . ($seen ? 'IS NOT NULL' : ' IS NULL');
+		}
+		if ($closed !== null) {
+			$query .= " and closed " . ($closed ? 'IS NOT NULL' : ' IS NULL');
+		}
+		
+		$st = $this->db()->prepare($query);
+		
+		if ($user_id) {
+			$st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
+		}
+		
+		if ($type !== null) {
+			$st->bindValue(':type', $type, PDO::PARAM_STR);
+		}
+		
+		if (!$st->execute()) {
+			$this->error("Can not get stat Messages count. $query");
+			return false;
+		}
+		
+		$f = $st->fetch(PDO::FETCH_ASSOC);
+		
+		return $f['cnt'];
+	}
+	
 	public function setSeen($id, $user_id=null)
 	{
 		$id = intval($id);
@@ -145,12 +184,7 @@ class Messenger extends Base
 	
 	static function error($str)
 	{
-		if (constant('BOOTSTRAP_VERSION') == 3) {
-			\Session::set('message-type', 'alert-danger');
-		} else {
-			\Session::set('message-type', 'alert-error');
-		}
-		
+		\Session::set('message-type', 'alert-danger');
 		\Session::set('message', $str);
 	}
 	

@@ -205,11 +205,11 @@ class FileStorage
 	static public function create($filename, $content, $storageName='', $fileIsKey=false, $postfix='')
 	{
 		if ($fileIsKey) {
-			if (!preg_match ('/^[a-z0-9]{32}\.\w+$/', $filename)) {
+			if (!preg_match ('/^[a-z0-9]{32}(\.\w+)$/', $filename, $m)) {
 				return false;
 			}
 			$hash = substr($filename, 0, 32);
-			$fileExt = '';
+			$fileExt = $m[1];
 		} else {
 			$hash = md5($filename . uniqid(time(), true));
 			$fileExt = '.' . pathinfo($filename, PATHINFO_EXTENSION);
@@ -219,15 +219,17 @@ class FileStorage
 		
 		$path = self::makePath($hash, $storageName);
 		
+		$file = $hash.$fileExt;
+		
 		if ($postfix) {
-			$hash .= '_'.$postfix;
+			$file = preg_replace('/\.(\w+)$/', '_'.$postfix.'.$1', $file);
 		}
 		
-		@file_put_contents($path.'/'.$hash.$fileExt, $content);
+		@file_put_contents($path.'/'.$file, $content);
 		
-		@chmod ($path.'/'.$hash.$fileExt, 0666);
+		@chmod ($path.'/'.$file, 0666);
 		
-		return $hash.$fileExt;
+		return $file;
 	}
 	
 	static public function makePath($hash, $storageName='')

@@ -43,14 +43,10 @@ class Form
 			"action" => isset($form['form']['action'])
 							? $form['form']['action']
 							: \Url::getPath(),
-			"prevent" => array(
-				"bootstrap", "jQuery",
-				'http://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js',
-				'https://ajax.googleapis.com/ajax/libs/jqueryui/1/jquery-ui.min.js'
-				),
+			"prevent" => array("bootstrap", "jquery", "jqueryui"),
 			'jQueryOptions' => array (
-				'changeMonth' => 'true',
-				'changeYear' => 'true',
+				'changeMonth' => true,
+				'changeYear' => true,
 			),
 			"view" => new $view,
 		));

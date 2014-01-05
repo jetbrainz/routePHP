@@ -121,30 +121,66 @@ class Queue extends Base
 		return true;
 	}
 	
-	public function create($task, $params)
+	public function reOpen($id)
 	{
-		$query = "insert into queue (task, params, brand) values (:task, :params, :brand)";
+		$id = intval($id);
+		$manager = LOGGED;
+		$query = "update queue set skipped=0 where id=$id and processed=0";
+		
+		if (!$this->db()->query($query)) {
+			return false;
+		}
+		
+		return true;
+	}
+	
+	public function create($task, $params, $owner=null, $owner_id=null)
+	{
+		$query = "insert into queue (task, params, brand, owner, owner_id) values (:task, :params, :brand, :owner, :owner_id)";
 		
 		$st = $this->db()->prepare($query);
 		
 		$st->bindValue(':task', $task);
 		$st->bindValue(':params', $params);
 		$st->bindValue(':brand', BRAND);
+		if ($owner) {
+			$st->bindValue(':owner', $owner);
+		} else {
+			$st->bindValue(':owner', null, PDO::PARAM_NULL);
+		}
+		if ($owner_id) {
+			$st->bindValue(':owner_id', $owner_id, PDO::PARAM_INT);
+		} else {
+			$st->bindValue(':owner_id', null, PDO::PARAM_NULL);
+		}
 		
 		return $st->execute() ? true : false;
 	}
 	
-	public function getList($task, $processed=false, $sorting=null)
+	public function getList($task, $processed=false, $owner=null, $owner_id=null, $sorting=null)
 	{
 		$processed = $processed ? 1 : 0;
 		$sort = ($sorting==self::SORT_DESC) ? 'desc' : 'asc';
 		
-		$query = "select id, created, params from queue where task=:task and processed=$processed and brand=:brand order by id $sort limit 100";
+		$query = "select * from queue where task=:task and processed=$processed and brand=:brand ";
+		if ($owner) {
+			$query .= ' and owner=:owner';
+		}
+		if ($owner_id) {
+			$query .= ' and owner_id=:owner_id';
+		}
+		$query .= " order by id $sort limit 100";
 		
 		$st = $this->db()->prepare($query);
 		
 		$st->bindValue(':task', $task);
 		$st->bindValue(':brand', BRAND);
+		if ($owner) {
+			$st->bindValue(':owner', $owner);
+		}
+		if ($owner_id) {
+			$st->bindValue(':owner_id', $owner_id, PDO::PARAM_INT);
+		}
 		
 		if (!$st->execute()) {
 			return null;
