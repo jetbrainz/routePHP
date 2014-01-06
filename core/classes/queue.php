@@ -55,6 +55,26 @@ class Queue extends Base
 		
 		$ret = $o->queueRun($task);
 		
+		if (isset ($ret['out_params'])) {
+			$out_params = $ret['out_params'];
+		} elseif (method_exists($o, 'getQueueOutParams')) {
+			$out_params = $o->getQueueOutParams();
+		} else {
+			$out_params = '';
+		}
+		
+		$status = isset($ret['status']) ? $ret['status'] : '';
+		
+		$query = "update queue set status=:status, out_params=:params where id=:id";
+		
+		$st = $this->db()->prepare($query);
+		
+		$st->bindValue(':id', $task['id']);
+		$st->bindValue(':params', $out_params);
+		$st->bindValue(':status', $status);
+		
+		$st->execute();
+		
 		if (!$ret) {
 			$query = "update queue set skipped=1 where id=:id";
 
@@ -66,23 +86,10 @@ class Queue extends Base
 			return;
 		}
 		
-		if (isset ($ret['out_params'])) {
-			$out_params = $ret['out_params'];
-		} elseif (method_exists($o, 'getQueueOutParams')) {
-			$out_params = $o->getQueueOutParams();
-		} else {
-			$out_params = '';
-		}
-		
-		$status = isset($ret['status']) ? $ret['status'] : '';
-		
-		$query = "update queue set processed=1, status=:status, out_params=:params where id=:id";
+		$query = "update queue set processed=1 where id=:id";
 		
 		$st = $this->db()->prepare($query);
-		
 		$st->bindValue(':id', $task['id']);
-		$st->bindValue(':params', $out_params);
-		$st->bindValue(':status', $status);
 		
 		$st->execute();
 	}
@@ -162,7 +169,7 @@ class Queue extends Base
 		$processed = $processed ? 1 : 0;
 		$sort = ($sorting==self::SORT_DESC) ? 'desc' : 'asc';
 		
-		$query = "select * from queue where task=:task and processed=$processed and brand=:brand ";
+		$query = "select * from queue where task=:task and processed=$processed and skipped=0 and brand=:brand ";
 		if ($owner) {
 			$query .= ' and owner=:owner';
 		}
