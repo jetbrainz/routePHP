@@ -15,7 +15,7 @@ class Country
 	
 	static public function getCodeByIP($ip)
 	{
-		$fc = strtoupper(file_get_contents("http://ipinfo.io/{$ip}/country"));
+		$fc = strtoupper(trim(file_get_contents("http://ipinfo.io/{$ip}/country")));
 		return $fc;
 	}
 	
