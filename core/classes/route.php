@@ -54,10 +54,17 @@ class Route extends Config
 			//We are using namespace
 			$this->prefix = strtolower($ns[1]);
 		}
-		
+	}
+	
+	final public function run()
+	{
 		$this->fireHooks();
-		
 		$this->fillAllScopes();
+	}
+	
+	final public function end()
+	{
+		$this->after();
 	}
 	
 	/**
@@ -211,8 +218,6 @@ class Route extends Config
 	public function render()
 	{
 		echo $this->html();
-		
-		$this->after();
 	}
 	
 	public function setLocalVariables()
