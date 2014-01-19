@@ -26,7 +26,9 @@ class Dispatcher
 		
 		$route = new $action;
 		
+		$route->run();
 		$route->render();
+		$route->end();
 	}
 	
 	private function getActionName()
