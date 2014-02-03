@@ -4,7 +4,7 @@ if (!defined('APP_LEVEL')) {
 	exit;
 }
 
-if (!defined('PATH_APP') && APP_LEVEL == 'WEB') {
+if (!defined('PATH_APP') && (APP_LEVEL == 'WEB' || APP_LEVEL == 'API')) {
 	echo 'PATH_APP is not defined';
 	exit;
 }
@@ -29,6 +29,7 @@ define ('PATH_CLASSES', realpath(PATH_CORE.'/classes'));
 define ('PATH_MODULES', realpath(PATH_APP.'/modules'));
 define ('PATH_CORE_MODULES', realpath(PATH_CORE.'/modules'));
 define ('PATH_ROUTES', realpath(PATH_APP.'/routes'));
+define ('PATH_API', realpath(PATH_APP.'/api'));
 define ('PATH_VIEWS', realpath(PATH_APP.'/views'));
 define ('PATH_EXT', realpath(PATH_CORE.'/ext'));
 define ('PATH_UTL', realpath(PATH_APP.'/utl'));
@@ -55,7 +56,10 @@ require_once PATH_PROPEL_LIB.'/Propel.php';
 try
 {
 	if (APP_LEVEL == 'WEB') {
-		new Dispatcher;
+		new Dispatcher('routes');
+	}
+	if (APP_LEVEL == 'API') {
+		new Dispatcher('api', 2);
 	}
 	if (APP_LEVEL == 'SCHEDULER') {
 		$q = new Queue();
@@ -118,6 +122,13 @@ function MainLoad($className)
 		$classNameFile = str_replace ('/routes', '', $classNameFile);
 		if (file_exists (PATH_ROUTES.$classNameFile)) {
 			include_once PATH_ROUTES.$classNameFile;
+			return;
+		}
+	} elseif (preg_match ('|^\/api\/|', $classNameFile)) {
+		// Load Route
+		$classNameFile = str_replace ('/api/', '/', $classNameFile);
+		if (file_exists (PATH_API.$classNameFile)) {
+			include_once PATH_API.$classNameFile;
 			return;
 		}
 	} else {
