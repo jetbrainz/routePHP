@@ -15,22 +15,28 @@ class Mailer extends Config
 	
 	public function getSwiftMailer()
 	{
-		return $this->configureSwift($this->getConfig('framework'));
+		return $this->configureSwift($this->getConfig('transport'));
 	}
 	
-	private function configureSwift()
+	private function configureSwift($transportName='mail')
 	{
 		if ((@include 'swift_required.php') === false) {
 			require 'Swift/swift_required.php';
 		}
 
 		$opt = $this->getConfig('options');
-
-		$transport = Swift_SmtpTransport::newInstance($opt['host'], $opt['port'])
-			->setUsername($opt['username'])
-			->setPassword($opt['password'])
-			->setEncryption($opt['encryption'])
-			;
+		
+		if ($transportName == 'smtp') {
+			$transport = Swift_SmtpTransport::newInstance($opt['host'], $opt['port'])
+				->setUsername($opt['username'])
+				->setPassword($opt['password'])
+				->setEncryption($opt['encryption'])
+				;
+		} elseif ($transportName == 'sendmail') {
+			$transport = Swift_SendmailTransport::newInstance();
+		} else {
+			$transport = Swift_MailTransport::newInstance();
+		}
 
 		return Swift_Mailer::newInstance($transport);
 
@@ -58,7 +64,7 @@ class Mailer extends Config
 		
 		try {
 			
-			$mailer = $this->configureSwift();
+			$mailer = $this->getSwiftMailer();
 			
 			$message = Swift_Message::newInstance($subject)
 					

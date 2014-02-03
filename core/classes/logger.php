@@ -8,7 +8,7 @@
 class Logger
 {
 	const DEBUG		= 'DEBUG';
-	const WARNING	= 'WORNING';
+	const WARNING	= 'WARNING';
 	const ERROR		= 'ERROR';
 	const FATAL		= 'FATAL';
 	

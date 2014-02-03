@@ -9,30 +9,41 @@ class Dispatcher
 {
 	private $prefix = '';
 	
-	public function __construct()
+	public function __construct($runLevel, $actionOffset=1)
 	{
 		if (LOGGED) {
 			$this->prefix = LOGGED_TYPE.'\\';
 		}
-		$action = 'routes\\' . $this->prefix . $this->getActionName();
+		$class = $runLevel.'\\' . $this->prefix . $this->getClassName($actionOffset);
 		
-		if (!class_exists($action)) {
-			$action = 'routes\\' . $this->getActionName();
+		if (!class_exists($class)) {
+			$class = $runLevel.'\\' . $this->getClassName($actionOffset);
 			
-			if (!class_exists($action)) {
-				$action = 'routes\\index';
+			if (!class_exists($class)) {
+				$class = $runLevel.'\\index';
 			}
 		}
 		
-		$route = new $action;
+		$class = new $class;
 		
-		$route->run();
-		$route->render();
-		$route->end();
+		$class->run();
+		
+		$method = $this->getMethodName($actionOffset+1);
+		if (method_exists($class, $method)) {
+			$class->$method();
+		}
+		
+		$class->render();
+		$class->end();
 	}
 	
-	private function getActionName()
+	private function getClassName($offset)
 	{
-		return Url::getPart(1) ? Url::getPart(1) : 'index';
+		return Url::getPart($offset) ? Url::getPart($offset) : 'index';
+	}
+	
+	private function getMethodName($offset)
+	{
+		return Url::getPart($offset) ? Url::getPart($offset) : '_INDEX';
 	}
 }

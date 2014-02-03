@@ -200,6 +200,14 @@ class Route extends Config
 	}
 	
 	/**
+	 * Hook for index method
+	 */
+	public function _INDEX()
+	{
+		
+	}
+	
+	/**
 	 * Return rendered HTML or set new one
 	 * @param String $html Optional. 
 	 * @return String

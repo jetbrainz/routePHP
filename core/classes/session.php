@@ -32,11 +32,16 @@ class Session
 	
 	static public function destroy()
 	{
-		if (session_id()) {
+		if (self::id()) {
 			foreach ($_SESSION as $k=>$v) {
 				unset($_SESSION[$k]);
 			}
 			session_destroy();
 		}
+	}
+	
+	static public function id()
+	{
+		return session_id();
 	}
 }
