@@ -19,7 +19,7 @@ class Url
 	
 	static public function getBase()
 	{
-		return 
+		return
 			'http' .
 			(isset($_SERVER['HTTPS'])?'s':'') .
 			'://' .
@@ -28,14 +28,12 @@ class Url
 	
 	static public function getPath()
 	{
-		$path = preg_replace ('/\?.*/', '', $_SERVER['REQUEST_URI']);
-		
-		return $path;
+		return parse_url ($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 	}
 	
 	static public function getValuePath()
 	{
-		$path = preg_replace ('/\?.*/', '', $_SERVER['REQUEST_URI']);
+		$path = self::getPath();
 		$path = explode ('/', $path);
 		
 		return self::getBase() . (isset($path[1]) ? '/'.$path[1] : '');
@@ -43,16 +41,16 @@ class Url
 	
 	static public function getParams()
 	{
-		$path = explode('?', $_SERVER['REQUEST_URI']);
+		$p = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY);
 		
-		return isset($path[1]) ? $path[1] : null;
+		return empty($p) ? null : $p;
 	}
 
 	static public function getURL()
 	{
-		$path = $_SERVER['REQUEST_URI'];
-		
-		return self::getBase().$path;
+		$path = self::getPath();
+		$params = self::getParams();
+		return self::getBase().$path.($params?'?'.$params:'');
 	}
 	
 	static public function getPart($num)
