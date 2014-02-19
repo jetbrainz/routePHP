@@ -2,7 +2,7 @@
 
 class Curl
 {
-	static public function post($url, $paramsm, $agent='routePHP App Server')
+	static public function post($url, $params, $agent='routePHP App Server')
 	{
 		$ch = curl_init();
 		
