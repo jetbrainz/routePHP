@@ -2,7 +2,7 @@
 
 class Curl
 {
-	static public function post($url, $params)
+	static public function post($url, $paramsm, $agent='routePHP App Server')
 	{
 		$ch = curl_init();
 		
@@ -10,6 +10,7 @@ class Curl
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 		curl_setopt($ch, CURLOPT_POST, true);
+		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
 		
 		return curl_exec($ch);
