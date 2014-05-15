@@ -20,6 +20,14 @@ class Queue extends Base
 			$this->taskMapper = $conf;
 		}
 	}
+
+	public function getObjectNameByTask($task)
+	{
+		if (!isset ($this->taskMapper[$task])) {
+			return null;
+		}
+		return $this->taskMapper[$task];
+	}
 	
 	public function run()
 	{
@@ -176,7 +184,7 @@ class Queue extends Base
 		if ($owner_id) {
 			$query .= ' and owner_id=:owner_id';
 		}
-		$query .= " order by id $sort limit 100";
+		$query .= " order by id $sort limit 50";
 		
 		$st = $this->db()->prepare($query);
 		
@@ -201,4 +209,58 @@ class Queue extends Base
 		
 		return $ret;
 	}
+
+	public function getSearchList($task=null, $processed=null, $skipped=null, $owner=null, $owner_id=null,  $page=1, $lpp=20, $sortField='id', $sortWay=self::SORT_DESC)
+	{
+		$query = "select * from queue where brand=:brand";
+
+		if ($task) {
+			$query .= ' and task=:task';
+		}
+		if ($owner) {
+			$query .= ' and owner=:owner';
+		}
+		if ($owner_id) {
+			$query .= ' and owner_id=:owner_id';
+		}
+		if ($processed !== null) {
+			$query .= ' and processed='.intval($processed);
+		}
+		if ($skipped !== null) {
+			$query .= ' and skipped='.intval($skipped);
+		}
+
+		$page = (int) $page;
+		$lpp = (int) $lpp;
+		$offset = ($page - 1) * $lpp;
+
+		$query .= " order by $sortField $sortWay limit $offset,$lpp";
+
+		$st = $this->db()->prepare($query);
+
+		$st->bindValue(':brand', BRAND);
+
+		if ($task) {
+			$st->bindValue(':task', $task);
+		}
+		if ($owner) {
+			$st->bindValue(':owner', $owner);
+		}
+		if ($owner_id) {
+			$st->bindValue(':owner_id', $owner_id, PDO::PARAM_INT);
+		}
+
+		if (!$st->execute()) {
+			return null;
+		}
+
+		$ret = array ();
+
+		while ($f=$st->fetch(PDO::FETCH_ASSOC)) {
+			$ret[] = $f;
+		}
+
+		return $ret;
+	}
+
 }

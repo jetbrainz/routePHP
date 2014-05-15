@@ -22,8 +22,9 @@ class DB extends PDO
 			try {
 				self::$instances[$hash] = new DB($dsn, $username, $password, $options);
 				self::$instances[$hash]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
-			} catch (Exception $e) {
+			} catch (\Exception $e) {
 				// TODO: make this visible
+				//print_r ($e);
 			}
 		}
 			

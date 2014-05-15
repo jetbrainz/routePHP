@@ -35,7 +35,7 @@ class Base extends Config
 	}
 	
 	/**
-	 * Return instanse of DB class
+	 * Return instance of DB class
 	 * @return DB
 	 */
 	protected function db($prefix='db')
@@ -54,7 +54,7 @@ class Base extends Config
 	}
 	
 	/**
-	 * Return instanse of Token class
+	 * Return instance of Token class
 	 * @return Token
 	 */
 	protected function token()
@@ -63,16 +63,6 @@ class Base extends Config
 			$this->token = new Token($this->db());
 		}
 		return $this->token;
-	}
-	
-	protected function debugParams($params)
-	{
-		$str = "Arguments BEGIN:\n";
-		foreach ($params as $k=>$v) {
-			$str .= '['.print_r ($v, true)."]\n";
-		}
-		$str .= 'END Arguments';
-		return $str; 
 	}
 	
 	public function queueRun($task)

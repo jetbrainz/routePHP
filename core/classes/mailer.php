@@ -101,7 +101,7 @@ class Mailer extends Config
 			$ret = $mailer->send($message);
 			
 			$this->logger->debug('Sent email to: '.$to.': '.(!$ret?'Error':'OK'));
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			
 			$this->logger->error('Mailer error: '.$e->getMessage());
 		}

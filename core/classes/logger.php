@@ -55,7 +55,7 @@ class Logger
 			if (in_array (strtoupper($method), $this->levels)) {
 				$this->log->$method($args[0]);
 			}
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			
 		}
 	}

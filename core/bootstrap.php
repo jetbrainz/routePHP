@@ -182,3 +182,13 @@ function array_merge_recursive_distinct ( array &$array1, array &$array2 )
 
 	return $merged;
 }
+
+function debugParams($params)
+{
+	$str = "Arguments BEGIN:\n";
+	$str .= print_r ($params, true);
+	$str .= 'END';
+
+	return $str;
+}
+

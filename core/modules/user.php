@@ -121,7 +121,7 @@ class User extends Base
 	
 	public function create($email, $password, $fields=null)
 	{
-		$this->logger->debug("Create profile: " . $this->debugParams(func_get_args()));
+		$this->logger->debug("Create profile: " . debugParams(func_get_args()));
 		
 		$country = isset ($fields['country'])
 					? (
@@ -160,7 +160,7 @@ class User extends Base
 		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 		
 		if (!$st->execute()) {
-			$this->logger->error("Can not create profile: " . $this->debugParams(func_get_args()));
+			$this->logger->error("Can not create profile: " . debugParams(func_get_args()));
 			$this->logger->error("SQL: " . $st->queryString);
 			return false;
 		}
@@ -349,21 +349,21 @@ class User extends Base
 		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 		
 		if (!$st->execute()) {
-			$this->logger->error("Can not get uid on id: " . $this->debugParams(func_get_args()));
+			$this->logger->error("Can not get uid on id: " . debugParams(func_get_args()));
 		}
 		
 		if ($f=$st->fetch(PDO::FETCH_ASSOC)) {
 			return $f['uid'];
 		}
 		
-		$this->logger->error("Empty result on getUID: " . $this->debugParams(func_get_args()));
+		$this->logger->error("Empty result on getUID: " . debugParams(func_get_args()));
 		
 		return false;
 	}
 	
 	public function delete($id)
 	{
-		$this->logger->debug("Delete profile: " . $this->debugParams(func_get_args()));
+		$this->logger->debug("Delete profile: " . debugParams(func_get_args()));
 
 		$bid = $this->bindID($id);
 		
