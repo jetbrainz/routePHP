@@ -41,7 +41,7 @@ class ACL extends Config
 		$acl = $this->getConfig($group);
 		if (
 			!empty ($acl[$object])
-			&& $acl[$object] & $action
+			&& $acl[$object] & ($action | self::A_ALL)
 		) {
 			return true;
 		}
