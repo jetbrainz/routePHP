@@ -62,25 +62,31 @@ try
 		new Dispatcher('api', 2);
 	}
 	if (APP_LEVEL == 'SCHEDULER') {
-		$q = new Queue();
 		$daemon = false;
-		foreach ($argv as $a) {
+		$args = '';
+		foreach ($argv as $k=>$a) {
 			if ($a == 'daemon') {
 				$daemon = true;
+			} elseif ($k) {
+				$args .= ($args?' ':'').$a;
 			}
 		}
 		if ($daemon) {
+			$wd = __DIR__;
 			do {
-				$q->run();
+				// Fresh copy of script each time
+				system(__DIR__.'/scheduler.php '.$args);
+				//$q->run();
 				sleep(1);
 			} while(1);
 		} else {
+			$q = new Queue();
 			for ($i=0;$i<15;$i++) {
 				$q->run();
 			}
 		}
 	}
-	
+
 }
 catch (AppException $ex)
 {
@@ -91,10 +97,10 @@ catch (AppException $ex)
 catch (PDOException $ex) {
 	$logger = new Logger('sql');
 	$logger->error(
-			"\n"
-			.$ex->getMessage()
-			."\n"
-			.$ex->getTraceAsString());
+		"\n"
+		.$ex->getMessage()
+		."\n"
+		.$ex->getTraceAsString());
 }
 
 function MainLoad($className)
@@ -106,17 +112,17 @@ function MainLoad($className)
 		PATH_UTL,
 		PATH_CORE_UTL,
 	);
-	
+
 	$className = strtolower($classNameCase = $className);
-	
+
 	if (!substr($className, 0, 1) != '\\') {
 		$className = '\\' . $className;
 	}
-	
+
 	$classNameFile = str_replace ('\\', '/', $className).'.php';
 	$classNameFileNaked = basename($classNameFile);
 	$dirNameFile = str_replace ('\\', '/', $className);
-	
+
 	if (preg_match ('|^\/routes|', $classNameFile)) {
 		// Load Route
 		$classNameFile = str_replace ('/routes', '', $classNameFile);
@@ -155,13 +161,13 @@ function ExtLoad($className) {
 		PATH_PROPEL_LIB,
 		PATH_PROPEL.'/classes',
 	);
-	
+
 	if (!substr($className, 0, 1) != '\\') {
 		$className = '\\' . $className;
 	}
-	
+
 	$classNameFile = str_replace ('\\', '/', $className).'.php';
-	
+
 	foreach ($paths as $path) {
 		if (file_exists ($path.$classNameFile)) {
 			include_once $path.$classNameFile;
