@@ -44,6 +44,7 @@ define ('DEFAULT_COUNTRY', \Country::getCode('Cyprus'));
 
 define ('LOGGED', \Session::get('logged'));
 define ('LOGGED_TYPE', \Session::get('logged_type'));
+define ('LOGGED_ACL', \Session::get('logged_acl'));
 define ('LOGGED_NAME', \Session::get('logged_name'));
 define ('LOGGED_EMAIL', \Session::get('logged_email'));
 
