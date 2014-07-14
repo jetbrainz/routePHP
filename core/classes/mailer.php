@@ -82,11 +82,13 @@ class Mailer extends Config
 				// Add images
 				if ($this->getConfig('images')) {
 					foreach ($this->getConfig('images') as $file=>$info) {
-						$messageHTML = str_replace (
+						if (stristr($messageHTML, '"'.$info['src'].'"') !== false) {
+							$messageHTML = str_replace (
 								'"'.$info['src'].'"',
 								'"'.$message->embed(Swift_Image::fromPath(PATH_WWW.$file)).'"',
 								$messageHTML
 							);
+						}
 					}
 				}
 
