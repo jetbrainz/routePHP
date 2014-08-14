@@ -190,13 +190,13 @@ class Messenger extends Base
 	
 	static function info($str)
 	{
-		\Session::set('message-type', '');
+		\Session::set('message-type', 'alert-info');
 		\Session::set('message', $str);
 	}
 	
 	static function warning($str)
 	{
-		\Session::set('message-type', 'alert-block');
+		\Session::set('message-type', 'alert-warning');
 		\Session::set('message', $str);
 	}
 	
