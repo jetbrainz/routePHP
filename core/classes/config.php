@@ -21,6 +21,7 @@ class Config
 		$local_config = array ();
 		
 		if (file_exists($file)) {
+			$config = array();
 			include $file;
 			$local_config = array_merge ($local_config, $config);
 		}
