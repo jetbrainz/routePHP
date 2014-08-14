@@ -15,15 +15,15 @@ class Dispatcher
 			$this->prefix = LOGGED_TYPE.'\\';
 		}
 		$class = $runLevel.'\\' . $this->prefix . $this->getClassName($actionOffset);
-		
+
 		if (!class_exists($class)) {
 			$class = $runLevel.'\\' . $this->getClassName($actionOffset);
-			
+
 			if (!class_exists($class)) {
 				$class = $runLevel.'\\index';
 			}
 		}
-		
+
 		$class = new $class;
 		
 		$class->run();
