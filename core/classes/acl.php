@@ -47,4 +47,9 @@ class ACL extends Config
 		}
 		return false;
 	}
+
+	public function getGroups()
+	{
+		return $this->getConfig('groups');
+	}
 }
