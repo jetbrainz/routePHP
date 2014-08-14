@@ -5,8 +5,6 @@
  ** @author Valentin Balt <valentin.balt@gmail.com>
  */
 
-use \User;
-
 class Route extends Config
 {
 	protected $HTML;
@@ -109,6 +107,9 @@ class Route extends Config
 	protected function fireHooks()
 	{
 		$this->before();
+		$rawPost = file_get_contents("php://input");
+
+
 		
 		// Let do some hooks
 		if (!empty($_FILES)) {
@@ -117,9 +118,13 @@ class Route extends Config
 		if (!empty($_GET)) {
 			$this->_GET();
 		}
+
 		if (!empty($_POST)) {
 			$this->_POST();
+		} elseif (!empty ($rawPost)) {
+			$this->_RAWPOST($rawPost);
 		}
+
 		if (\Url::isSuccess()) {
 			$this->_SUCCESS();
 		}
@@ -134,9 +139,8 @@ class Route extends Config
 			$this->_AJAX();
 			exit;
 		}
-		
 	}
-	
+
 	public function __destruct() {
 		;
 	}
@@ -166,7 +170,15 @@ class Route extends Config
 	{
 		
 	}
-	
+
+	/**
+	 * Hook for RAW POST
+	 */
+	protected function _RAWPOST($rawPost)
+	{
+
+	}
+
 	/**
 	 * Hook for FILES upload
 	 */
