@@ -14,11 +14,21 @@ class Menu {
 		if ($header) {
 			$menu .= '<li class="nav-header">'.$header.'</li>';
 		}
-		
+		$haveActive = false;
 		foreach ($links as $link=>$text) {
+			if (stristr(\Url::getPath(), $link) !== false) {
+				// we have acive item
+				$haveActive = $link;
+				break;
+			}
+		}
+		foreach ($links as $link=>$text) {
+			if (!$haveActive) {
+				$haveActive = $link;
+			}
 			$menu .= 
 				'<li' .
-				((stristr(\Url::getPath(), $link) !== false) ? ' class="active"' : '' ) .
+				(($haveActive == $link) ? ' class="active"' : '' ) .
 				'><a href="' . $link . '">' . $text . '</a>' .
 				'</li>';
 		}
