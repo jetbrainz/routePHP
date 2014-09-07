@@ -166,12 +166,16 @@ function ExtLoad($className) {
 	if (!substr($className, 0, 1) != '\\') {
 		$className = '\\' . $className;
 	}
+	$className = str_replace ('\\', '/', $className);
 
-	$classNameFile = str_replace ('\\', '/', $className).'.php';
+	$classNameFile = $className.'.php';
 
 	foreach ($paths as $path) {
 		if (file_exists ($path.$classNameFile)) {
 			include_once $path.$classNameFile;
+		}
+		if (file_exists ($path.$className.$classNameFile)) {
+			include_once $path.$className.$classNameFile;
 		}
 	}
 }
