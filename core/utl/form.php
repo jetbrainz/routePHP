@@ -86,7 +86,7 @@ class Form
 				$el['properties']['labelWidth'] = $form['form']['labelWidth'];
 			}
 			if (!isset($form['form']['controlWidth'])) {
-				$el['properties']['controlWidth'] = 5;
+				$el['properties']['controlWidth'] = 6;
 			} elseif ($form['form']['controlWidth']) {
 				$el['properties']['controlWidth'] = $form['form']['controlWidth'];
 			}
@@ -120,7 +120,7 @@ class Form
 				$p1 = isset($el['label']) ? $el['label'] : '';
 				$p2 = isset($el['name']) ? $el['name'] : '';
 				$p3 = array_merge(
-							array ('value' => isset($el['value'])?$el['value']:''),
+							array ('value' => isset($el['value'])?$el['value']:null),
 							isset($el['properties']) ? $el['properties'] : null
 						);
 				$p4 = null;
