@@ -225,7 +225,15 @@ class FileStorage
 			$file = preg_replace('/\.(\w+)$/', '_'.$postfix.'.$1', $file);
 		}
 		
-		@file_put_contents($path.'/'.$file, $content);
+		$bytes = @file_put_contents($path.'/'.$file, $content);
+
+		if ($bytes === false) {
+			return false;
+		}
+
+		if ($content != @file_get_contents($path.'/'.$file)) {
+			return false;
+		}
 		
 		@chmod ($path.'/'.$file, 0666);
 		
