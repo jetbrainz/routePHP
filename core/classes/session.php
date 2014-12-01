@@ -1,8 +1,8 @@
 <?php
 if (!session_id()) {
-	if (isset ($_ENV['SESSION_DOMAIN'])) {
+	if (getenv('SESSION_DOMAIN')) {
 		$p = session_get_cookie_params();
-		session_set_cookie_params($p['lifetime'], $p['path'], $_ENV['SESSION_DOMAIN'], $p['secure'], $p['httponly']);
+		session_set_cookie_params($p['lifetime'], $p['path'], getenv('SESSION_DOMAIN'), $p['secure'], $p['httponly']);
 	}
 	session_start();
 }
