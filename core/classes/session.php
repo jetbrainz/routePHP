@@ -1,10 +1,10 @@
 <?php
 if (!session_id()) {
-	session_start();
 	if (defined('SESSION_DOMAIN')) {
 		$p = session_get_cookie_params();
 		session_set_cookie_params($p['lifetime'], $p['path'], SESSION_DOMAIN, $p['secure'], $p['httponly']);
 	}
+	session_start();
 }
 /**
  * Description of session
