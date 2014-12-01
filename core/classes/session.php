@@ -1,6 +1,10 @@
 <?php
 if (!session_id()) {
 	session_start();
+	if (defined('SESSION_DOMAIN')) {
+		$p = session_get_cookie_params();
+		session_set_cookie_params($p['lifetime'], $p['path'], SESSION_DOMAIN, $p['secure'], $p['httponly']);
+	}
 }
 /**
  * Description of session
@@ -10,7 +14,8 @@ if (!session_id()) {
 class Session
 {
 	const PREFIX = 'session_';
-	
+	static private $initiated = false;
+
 	static public function get($name)
 	{
 		return isset($_SESSION[self::PREFIX.$name])
