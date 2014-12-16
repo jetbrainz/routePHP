@@ -17,6 +17,10 @@ if (APP_LEVEL == 'SCHEDULER') {
 	define ('PATH_APP', $argv[1]);
 }
 
+if (APP_LEVEL == 'PHPUNIT') {
+	define ('PATH_APP', getcwd());
+}
+
 spl_autoload_register("MainLoad");
 
 if(in_array("__autoload", spl_autoload_functions()))
@@ -37,6 +41,7 @@ define ('PATH_CORE_UTL', realpath(PATH_CORE.'/utl'));
 define ('PATH_WWW', realpath(PATH_APP.'/www'));
 define ('PATH_VAR', realpath(PATH_APP.'/var'));
 define ('PATH_LOG', realpath(PATH_VAR.'/log'));
+define ('PATH_LIB', realpath(PATH_APP.'/lib'));
 define ('PATH_PROPEL_LIB', PATH_EXT.'/Propel/runtime/lib');
 define ('PATH_PROPEL', PATH_APP.'/propel/build');
 
@@ -61,6 +66,9 @@ try
 	}
 	if (APP_LEVEL == 'API') {
 		new Dispatcher('api', 2);
+	}
+	if (APP_LEVEL == 'PHPUNIT') {
+		//new Dispatcher('tests');
 	}
 	if (APP_LEVEL == 'SCHEDULER') {
 		$daemon = false;
@@ -157,6 +165,7 @@ function MainLoad($className)
 
 function ExtLoad($className) {
 	$paths = array (
+		PATH_LIB,
 		PATH_EXT,
 		PATH_EXT.'/monolog/src',
 		PATH_PROPEL_LIB,
