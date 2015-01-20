@@ -37,8 +37,21 @@ class Password
 
 	static public function secure_password($length=8)
 	{
-		$chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_-=+;:,.?";
-		$password = substr( str_shuffle( $chars ), 0, $length );
+		if ($length < 8) {
+			return false;
+		}
+		$chars = 'abcdefghijklmnopqrstuvwxyz';
+		$charsUpper = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+		$digits = '0123456789';
+		$symbols = '!@#$%^&*()_-=+;:,.?';
+
+		$str = substr( str_shuffle( $chars ), 0, $length-4)
+				. substr( str_shuffle( $charsUpper ), 0, 2)
+				. substr( str_shuffle( $digits ), 0, 1)
+				. substr( str_shuffle( $symbols ), 0, 1);
+
+		$password = str_shuffle ($str);
+
 		return $password;
 	}
 }
