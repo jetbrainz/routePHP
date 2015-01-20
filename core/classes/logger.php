@@ -48,12 +48,17 @@ class Logger
 	
 	public function __call($method, $args)
 	{
+		$callers = debug_backtrace();
+
 		$this->message = $args[0];
 		
 		$method = strtolower($method);
 		try {
 			if (in_array (strtoupper($method), $this->levels)) {
-				$this->log->$method($args[0]);
+				$this->log->$method(
+					$callers[2]['function'].':'.$callers[1]['line'].' - '
+					.$args[0]
+				);
 			}
 		} catch (\Exception $e) {
 			
