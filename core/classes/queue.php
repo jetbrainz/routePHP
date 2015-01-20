@@ -181,7 +181,7 @@ class Queue extends Base
 			$st->bindValue(':processed', 0, PDO::PARAM_INT);
 		}
 
-		return $st->execute() ? true : false;
+		return $st->execute() ? $this->db()->lastInsertId() : false;
 	}
 	
 	public function getList($task, $processed=false, $owner=null, $owner_id=null, $sorting=null, $parent_id=null)
