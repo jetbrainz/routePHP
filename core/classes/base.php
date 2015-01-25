@@ -13,7 +13,7 @@ class Base extends Config
 	public function __construct($logger=true)
 	{
 		parent::__construct();
-		
+
 		if ($logger) {
 			$this->logger = new Logger(get_class($this));
 		}
@@ -40,15 +40,24 @@ class Base extends Config
 	 */
 	protected function db($prefix='db')
 	{
-		if (!$this->dbo) {
-			if ($db = $this->getConfig($prefix)) {
-				$this->dbo = DB::getInstance(
-						$db['dsn'],
-						$db['username'],
-						$db['password'],
-						$db['options']
-					);
+		if ($this->dbo === null) {
+			$params = null;
+			if (is_string($prefix)) {
+				$params = $this->getConfig($prefix);
+			} elseif (is_array($prefix)) {
+				$params = $prefix;
 			}
+			if (!empty($params)) {
+				$this->dbo = DB::getInstance(
+					$params['dsn'],
+					$params['username'],
+					$params['password'],
+					$params['options']
+				);
+			} else {
+				$this->dbo = DB::getDummy();
+			}
+
 		}
 		return $this->dbo;
 	}

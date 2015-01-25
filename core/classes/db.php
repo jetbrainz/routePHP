@@ -10,7 +10,7 @@
  *
  ** @author Valentin Balt <valentin.balt@gmail.com>
  */
-class DB extends PDO
+class DB
 {
 	static private $instances = array();
 	
@@ -20,7 +20,7 @@ class DB extends PDO
 		
 		if (!isset (self::$instances[$hash])) {
 			try {
-				self::$instances[$hash] = new DB($dsn, $username, $password, $options);
+				self::$instances[$hash] = new PDO($dsn, $username, $password, $options);
 				self::$instances[$hash]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
 			} catch (\Exception $e) {
 				// TODO: make this visible
@@ -33,8 +33,21 @@ class DB extends PDO
 	
 	static public function getNewInstance($dsn, $username, $password, $options)
 	{
-		$db = new DB($dsn, $username, $password, $options);
+		$db = new PDO($dsn, $username, $password, $options);
 		//$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 		return $db;
+	}
+
+	static public function getDummy()
+	{
+		return new dummyDB();
+	}
+}
+
+class dummyDB
+{
+	public function __call($method, $params)
+	{
+		throw new Exception('No connection to database. Dummy class.');
 	}
 }
