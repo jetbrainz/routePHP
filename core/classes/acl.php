@@ -19,7 +19,7 @@ class ACL extends Config
 	const A_ACTIVATE	= 0b0000000000000000000000100000000;
 	const A_DEACTIVATE	= 0b0000000000000000000001000000000;
 	const A_ALL			= 0b1000000000000000000000000000000; // 32bit - 1bit
-	
+
 	private
 		$group = null, // User's group
 		$acl = null; // Access List
