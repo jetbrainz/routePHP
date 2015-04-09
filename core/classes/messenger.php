@@ -10,18 +10,22 @@ class Messenger extends Base
 	const MSG_FLASH		= 'flash';
 	const MSG_NOTE		= 'note';
 	const MSG_STATIC	= 'static';
+
+	const VISIBILITY_SECURE = 'secure';
+	const VISIBILITY_BACKOFFICE = 'backoffice';
 	
 	public function __construct()
 	{
 		parent::__construct();
 	}
 	
-	public function create($user_id, $type, $message)
+	public function create($user_id, $type, $message, $visibility='secure', $owner_id=null)
 	{
+		$visibility = $visibility==self::VISIBILITY_BACKOFFICE?self::VISIBILITY_BACKOFFICE:self::VISIBILITY_SECURE;
 		$user_id = intval($user_id);
 		
-		$query = "insert into messenger (`user_id`, `type`, `message`) values ";
-		$query .= "(:user_id, :type, :message)";
+		$query = "insert into messenger (`user_id`, `type`, `message`, `visibility`, `owner_id`) values ";
+		$query .= "(:user_id, :type, :message, :visibility, :owner_id)";
 		
 		$st = $this->db()->prepare($query);
 		if (!$st) {
@@ -32,6 +36,8 @@ class Messenger extends Base
 		$st->bindValue(':user_id', $user_id, PDO::PARAM_INT);
 		$st->bindValue(':type', $type, PDO::PARAM_STR);
 		$st->bindValue(':message', $message, PDO::PARAM_STR);
+		$st->bindValue(':visibility', $visibility, PDO::PARAM_STR);
+		$st->bindValue(':owner_id', $owner_id, $owner_id?PDO::PARAM_INT:PDO::PARAM_NULL);
 		
 		if (!$st->execute()) {
 			$this->error("Can not insert new Message. $query");
@@ -41,14 +47,15 @@ class Messenger extends Base
 		return true;
 	}
 	
-	public function getFullList($user_id, $offset=0, $limit=10)
+	public function getFullList($user_id, $offset=0, $limit=10, $visibility=self::VISIBILITY_SECURE)
 	{
+		$visibility = $visibility==self::VISIBILITY_BACKOFFICE?self::VISIBILITY_BACKOFFICE:self::VISIBILITY_SECURE;
 		$user_id = intval($user_id);
 		
 		$offset = (int) $offset;
 		$limit = (int) $limit;
 		
-		$query = "select * from messenger where user_id=:user_id order by id desc limit $offset,$limit";
+		$query = "select * from messenger where user_id=:user_id and visibility='$visibility' order by id desc limit $offset,$limit";
 		
 		$st = $this->db()->prepare($query);
 		
@@ -68,11 +75,12 @@ class Messenger extends Base
 		return $ret;
 	}
 	
-	public function getList($user_id, $type=null, $seen=null, $closed=null)
+	public function getList($user_id, $type=null, $seen=null, $closed=null, $visibility=self::VISIBILITY_SECURE)
 	{
+		$visibility = $visibility==self::VISIBILITY_BACKOFFICE?self::VISIBILITY_BACKOFFICE:self::VISIBILITY_SECURE;
 		$user_id = intval($user_id);
 		
-		$query = "select * from messenger where user_id=:user_id";
+		$query = "select * from messenger where user_id=:user_id and visibility='$visibility'";
 		
 		if ($type !== null) {
 			$query .= " and type=:type";
@@ -106,13 +114,14 @@ class Messenger extends Base
 		return $ret;
 	}
 	
-	public function statMessagesCount($user_id=null, $type=null, $seen=null, $closed=null)
+	public function statMessagesCount($user_id=null, $type=null, $seen=null, $closed=null, $visibility=self::VISIBILITY_SECURE)
 	{
+		$visibility = $visibility==self::VISIBILITY_BACKOFFICE?self::VISIBILITY_BACKOFFICE:self::VISIBILITY_SECURE;
 		if ($user_id) {
 			$user_id = intval($user_id);
-			$query = "select count(id) as cnt from messenger where user_id=:user_id";
+			$query = "select count(id) as cnt from messenger where user_id=:user_id and visibility='$visibility'";
 		} else {
-			$query = "select count(id) as cnt from messenger where 1=1";
+			$query = "select count(id) as cnt from messenger where 1=1 and visibility='$visibility'";
 		}
 		
 		if ($type !== null) {
