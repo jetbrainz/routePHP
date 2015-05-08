@@ -54,8 +54,8 @@ class Form
 		if (isset ($form['form']['legend'])) {
 			$pfbc->addElement(new PFBC\Element\HTML('<legend>' . $form['form']['legend'] . '</legend>'));
 		}
-		if (isset ($form['hidden'])) {
-			foreach ($form['elements']['hidden'] as $el) {
+		if (isset ($form['hidden']) && is_array ($form['hidden'])) {
+			foreach ($form['hidden'] as $el) {
 				$pfbc->addElement(new PFBC\Element\Hidden($el['name'], $el['value']));
 			}
 		}
