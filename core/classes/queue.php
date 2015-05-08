@@ -70,29 +70,26 @@ class Queue extends Base
 		} else {
 			$out_params = '';
 		}
-		
-		$status = isset($ret['status']) ? $ret['status'] : '';
-		
+
+		if (isset ($ret['status'])) {
+			$status = $ret['status'];
+		} elseif ($ret === true) {
+			$status = 1;
+		} elseif ($ret === false) {
+			$status = -1;
+		} else {
+			$status = 0;
+		}
+
 		$query = "update queue set status=:status, out_params=:params where id=:id";
 		
 		$st = $this->db()->prepare($query);
 		
 		$st->bindValue(':id', $task['id']);
-		$st->bindValue(':params', $out_params);
+		$st->bindValue(':params', is_array ($out_params)?json_encode($out_params):$out_params);
 		$st->bindValue(':status', $status);
 		
 		$st->execute();
-		
-		if (!$ret) {
-			$query = "update queue set skipped=1 where id=:id";
-
-			$st = $this->db()->prepare($query);
-
-			$st->bindValue(':id', $task['id']);
-
-			$st->execute();
-			return;
-		}
 		
 		$query = "update queue set processed=1 where id=:id";
 		
@@ -144,7 +141,7 @@ class Queue extends Base
 	{
 		$id = intval($id);
 		$manager = LOGGED;
-		$query = "update queue set skipped=0 where id=$id and processed=0";
+		$query = "update queue set skipped=0, processed=0 where id=$id";
 		
 		if (!$this->db()->query($query)) {
 			return false;

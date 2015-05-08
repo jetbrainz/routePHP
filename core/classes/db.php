@@ -48,6 +48,7 @@ class dummyDB
 {
 	public function __call($method, $params)
 	{
+		return false;
 		throw new Exception('No connection to database. Dummy class.');
 	}
 }
