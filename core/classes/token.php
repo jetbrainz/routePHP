@@ -58,7 +58,40 @@ class Token extends Base
 		
 		return $ret;
 	}
-	
+
+	public function update($key, $lang, $translation)
+	{
+		$query = "select * from tokens where token_hash=:token_hash and lang='en'";
+		$st = $this->db()->prepare($query);
+
+		$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
+		$st->execute();
+
+		if ($t = $st->fetch(PDO::FETCH_ASSOC)) {
+			$query = "select * from tokens where token_hash=:token_hash and lang=:lang";
+			$st = $this->db()->prepare($query);
+
+			$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
+			$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+
+			$st->execute();
+			if ($t = $st->fetch(PDO::FETCH_ASSOC)) {
+				$query = "update tokens set token_value=:token_value where id={$t['id']}";
+				$st = $this->db()->prepare($query);
+				$st->bindValue(':token_value', $translation, PDO::PARAM_STR);
+			} else {
+				$query = "insert into tokens (lang, token_hash, token_value) values (:lang, :token_hash, :token_value)";
+				$st = $this->db()->prepare($query);
+				$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
+				$st->bindValue(':token_value', $translation, PDO::PARAM_STR);
+				$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+			}
+			$st->execute();
+		}
+
+		return true;
+	}
+
 	public function setLang($lang='en')
 	{
 		$this->lang = $lang;
@@ -104,4 +137,5 @@ class Token extends Base
 		
 		return false;
 	}
+
 }
