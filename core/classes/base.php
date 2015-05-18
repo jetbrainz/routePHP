@@ -69,7 +69,7 @@ class Base extends Config
 	protected function token()
 	{
 		if (!$this->token) {
-			$this->token = new Token($this->db());
+			$this->token = new Token();
 		}
 		return $this->token;
 	}
