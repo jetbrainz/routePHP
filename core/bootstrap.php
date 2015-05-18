@@ -9,7 +9,7 @@ if (!defined('PATH_APP') && (APP_LEVEL == 'WEB' || APP_LEVEL == 'API')) {
 	exit;
 }
 
-if (APP_LEVEL == 'SCHEDULER') {
+if (APP_LEVEL == 'SCHEDULER' || APP_LEVEL == 'COMMAND') {
 	if (empty($argv[1])) {
 		echo 'PATH_APP should be provided as first argument';
 		exit;
@@ -66,6 +66,9 @@ try
 	}
 	if (APP_LEVEL == 'API') {
 		new Dispatcher('api', 2);
+	}
+	if (APP_LEVEL == 'COMMAND') {
+		// No start point
 	}
 	if (APP_LEVEL == 'PHPUNIT') {
 		//new Dispatcher('tests');
@@ -168,6 +171,7 @@ function ExtLoad($className) {
 		PATH_LIB,
 		PATH_EXT,
 		PATH_EXT.'/monolog/src',
+		PATH_EXT.'/PhpAmqpLib',
 		PATH_PROPEL_LIB,
 		PATH_PROPEL.'/classes',
 	);
