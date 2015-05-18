@@ -20,7 +20,7 @@ class Route extends Config
 	/**
 	 * @var Token
 	 */
-	private $token;
+	protected $token;
 	
 	static protected $SCOPE=null;
 	
