@@ -16,6 +16,28 @@ class Token extends Base
 		parent::__construct();
 		$this->lang = $lang;
 	}
+
+	public function getList($lang=null)
+	{
+		if (!$lang) {
+			$lang = $this->lang;
+		}
+
+		$query = "select * from tokens where brand=:brand and lang=:lang";
+		$st = $this->db()->prepare($query);
+
+		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
+		$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+
+		$st->execute();
+
+		$ret = array();
+		while ($t = $st->fetch(PDO::FETCH_ASSOC)) {
+			$ret[] = $t;
+		}
+
+		return $ret;
+	}
 	
 	public function get($name, $lang=null)
 	{
@@ -26,9 +48,10 @@ class Token extends Base
 		if (!$ret) {
 			$val = $name;
 			
-			$query = "select * from tokens where token_hash=:token_hash and lang=:lang";
+			$query = "select * from tokens where brand=:brand and token_hash=:token_hash and lang=:lang";
 			$st = $this->db()->prepare($query);
 
+			$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 			$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
 			$st->bindValue(':lang', $this->lang, PDO::PARAM_STR);
 
@@ -39,14 +62,15 @@ class Token extends Base
 			} else {
 				$st = $this->db()->prepare(
 						"insert into tokens "
-						."(token_hash, token_value, lang) "
+						."(token_hash, token_value, lang, brand) "
 						."values "
-						."(:token_hash, :token_value, :lang)"
+						."(:token_hash, :token_value, :lang, :brand)"
 					);
 
 				$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
 				$st->bindValue(':token_value', $val, PDO::PARAM_LOB);
 				$st->bindValue(':lang', $this->lang, PDO::PARAM_STR);
+				$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 
 				$st->execute();
 			}
@@ -61,18 +85,20 @@ class Token extends Base
 
 	public function update($key, $lang, $translation)
 	{
-		$query = "select * from tokens where token_hash=:token_hash and lang='en'";
+		$query = "select * from tokens where brand=:brand and token_hash=:token_hash and lang='en'";
 		$st = $this->db()->prepare($query);
 
 		$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
+		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 		$st->execute();
 
 		if ($t = $st->fetch(PDO::FETCH_ASSOC)) {
-			$query = "select * from tokens where token_hash=:token_hash and lang=:lang";
+			$query = "select * from tokens where brand=:brand and token_hash=:token_hash and lang=:lang";
 			$st = $this->db()->prepare($query);
 
 			$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
 			$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+			$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 
 			$st->execute();
 			if ($t = $st->fetch(PDO::FETCH_ASSOC)) {
@@ -80,11 +106,12 @@ class Token extends Base
 				$st = $this->db()->prepare($query);
 				$st->bindValue(':token_value', $translation, PDO::PARAM_STR);
 			} else {
-				$query = "insert into tokens (lang, token_hash, token_value) values (:lang, :token_hash, :token_value)";
+				$query = "insert into tokens (lang, token_hash, token_value, brand) values (:lang, :token_hash, :token_value, :brand)";
 				$st = $this->db()->prepare($query);
 				$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
 				$st->bindValue(':token_value', $translation, PDO::PARAM_STR);
 				$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+				$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 			}
 			$st->execute();
 		}
@@ -118,10 +145,11 @@ class Token extends Base
 				from
 				  tokens t1
 				left join tokens t2 on t1.token_hash=t2.token_hash
-				where t1.lang='en' and t2.lang=:lang";
+				where t1.lang='en' and t2.lang=:lang and brand=:brand";
 			
 			$st = $this->db()->prepare($query);
-			$st->bindValue(':lang', $lang);
+			$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+			$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 			$st->execute();
 			
 			while ($f = $st->fetch(PDO::FETCH_ASSOC)) {
