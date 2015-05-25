@@ -16,6 +16,8 @@ class Route extends Config
 	protected $viewName=null;
 	protected $scopeName=null;
 	protected $params=null;
+
+	protected $output = true;
 	
 	/**
 	 * @var Token
@@ -237,7 +239,9 @@ class Route extends Config
 	 */
 	public function render()
 	{
-		echo $this->html();
+		if ($this->output) {
+			echo $this->html();
+		}
 	}
 	
 	public function setLocalVariables()
