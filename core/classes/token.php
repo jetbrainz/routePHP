@@ -41,7 +41,11 @@ class Token extends Base
 	
 	public function get($name, $lang=null)
 	{
-		$key = md5($name);
+		if (!preg_match('/^[0-9a-z]{32}$/i', $name)) {
+			$key = md5($name);
+		} else {
+			$key = $name;
+		}
 		
 		$ret = FileStorage::get($key, 'lang-'.$this->lang);
 		
