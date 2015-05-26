@@ -10,16 +10,40 @@ class Token extends Base
 	const BASE_LANG = 'en';
 	
 	private $lang = 'en';
+	private $languages = array ('en' => 'English');
+	private $publishedLanguages = array ('en');
 	
 	public function __construct($lang='en')
 	{
 		parent::__construct();
-		$this->lang = $lang;
+
+		$languages = $this->getConfig('languages');
+		$publishedLanguages = $this->getConfig('published');
+		if (is_array ($languages)) {
+			$this->languages = $languages;
+		}
+		if (is_array ($publishedLanguages)) {
+			$this->publishedLanguages = $publishedLanguages;
+		}
+
+		if ($this->isPublished($lang)) {
+			$this->lang = $lang;
+		}
+	}
+
+	public function isPublished($lang)
+	{
+		return (DEVMODE || $lang == 'en' || ($lang != 'en' && in_array ($lang, $this->publishedLanguages)));
+	}
+
+	public function getLanguages()
+	{
+		return $this->languages;
 	}
 
 	public function getList($lang=null)
 	{
-		if (!$lang) {
+		if (!$lang || !$this->isPublished($lang)) {
 			$lang = $this->lang;
 		}
 
@@ -41,13 +65,17 @@ class Token extends Base
 	
 	public function get($name, $lang=null)
 	{
+		if (!$lang || !$this->isPublished($lang)) {
+			$lang = $this->lang;
+		}
+
 		if (!preg_match('/^[0-9a-z]{32}$/i', $name)) {
 			$key = md5($name);
 		} else {
 			$key = $name;
 		}
 		
-		$ret = FileStorage::get($key, 'lang-'.$this->lang);
+		$ret = FileStorage::get($key, 'lang-'.$lang);
 		
 		if (!$ret) {
 			$val = $name;
@@ -57,7 +85,7 @@ class Token extends Base
 
 			$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 			$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
-			$st->bindValue(':lang', $this->lang, PDO::PARAM_STR);
+			$st->bindValue(':lang', $lang, PDO::PARAM_STR);
 
 			$st->execute();
 
@@ -73,13 +101,13 @@ class Token extends Base
 
 				$st->bindValue(':token_hash', $key, PDO::PARAM_STR);
 				$st->bindValue(':token_value', $val, PDO::PARAM_LOB);
-				$st->bindValue(':lang', $this->lang, PDO::PARAM_STR);
+				$st->bindValue(':lang', $lang, PDO::PARAM_STR);
 				$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
 
 				$st->execute();
 			}
 			
-			FileStorage::create($key, $val, 'lang-'.$this->lang, true);
+			FileStorage::create($key, $val, 'lang-'.$lang, true);
 
 			return $val;
 		}
@@ -89,6 +117,10 @@ class Token extends Base
 
 	public function update($key, $lang, $translation)
 	{
+		if (!$lang || !$this->isPublished($lang)) {
+			$lang = $this->lang;
+		}
+
 		$query = "select * from tokens where brand=:brand and token_hash=:token_hash and lang='en'";
 		$st = $this->db()->prepare($query);
 
@@ -125,7 +157,9 @@ class Token extends Base
 
 	public function setLang($lang='en')
 	{
-		$this->lang = $lang;
+		if ($lang && $this->isPublished($lang)) {
+			$this->lang = $lang;
+		}
 	}
 	
 	public function getLang()
