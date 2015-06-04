@@ -21,6 +21,11 @@ class Queue extends Base
 		}
 	}
 
+	public function getTaskNames()
+	{
+		return array_keys($this->taskMapper);
+	}
+
 	public function getObjectNameByTask($task)
 	{
 		if (!isset ($this->taskMapper[$task])) {
@@ -29,9 +34,9 @@ class Queue extends Base
 		return $this->taskMapper[$task];
 	}
 	
-	public function run()
+	public function run($task=null)
 	{
-		$task = $this->get();
+		$task = $this->get(null, $task);
 		
 		if (!$task) {
 			return null;
@@ -99,17 +104,22 @@ class Queue extends Base
 		$st->execute();
 	}
 	
-	public function get($id=null)
+	public function get($id=null, $task=null)
 	{
 		if ($id !== null) {
 			$id = intval($id);
 			$query = "select * from queue where id=$id";
+		} elseif ($task !== null) {
+			$query = "select * from queue where processed=0 and skipped=0 and brand=:brand and task=:task order by id limit 1";
 		} else {
 			$query = "select * from queue where processed=0 and skipped=0 and brand=:brand order by id limit 1";
 		}
 		
 		$st = $this->db()->prepare($query);
-		$st->bindValue(':brand', BRAND);
+		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
+		if ($task !== null) {
+			$st->bindValue(':task', $task, PDO::PARAM_STR);
+		}
 		
 		$st->execute();
 		if (!$f=$st->fetch(PDO::FETCH_ASSOC)) {
