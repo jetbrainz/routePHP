@@ -92,8 +92,11 @@ try
 			$q = new Queue();
 			$tn = $q->getTaskNames();
 			foreach ($tn as $task) {
-				echo $exec = __DIR__.'/scheduler.php '.PATH_APP.' ' .$task.' daemon_task '.$args.' >/dev/null 2>&1 &';
-				system($exec);
+				exec('ps auxwww|grep "'.PATH_APP.' ' .$task.' daemon_task"|grep -v grep', $output);
+				if (empty ($output)) {
+					$exec = __DIR__.'/scheduler.php '.PATH_APP.' ' .$task.' daemon_task '.$args.' >/dev/null 2>&1 &';
+					system($exec);
+				}
 			}
 		} elseif ($daemon_task) {
 			do {
