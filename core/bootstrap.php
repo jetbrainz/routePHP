@@ -75,26 +75,46 @@ try
 	}
 	if (APP_LEVEL == 'SCHEDULER') {
 		$daemon = false;
+		$daemon_task = false;
 		$args = '';
 		foreach ($argv as $k=>$a) {
 			if ($a == 'daemon') {
 				$daemon = true;
-			} elseif ($k) {
+				$daemon_task = false;
+			} elseif ($a == 'daemon_task') {
+				$daemon_task = true;
+				$daemon = false;
+			} elseif ($k>1) {
 				$args .= ($args?' ':'').$a;
 			}
 		}
 		if ($daemon) {
-			$wd = __DIR__;
+			$q = new Queue();
+			$tn = $q->getTaskNames();
+			foreach ($tn as $task) {
+				echo $exec = __DIR__.'/scheduler.php '.PATH_APP.' ' .$task.' daemon_task '.$args.' >/dev/null 2>&1 &';
+				system($exec);
+			}
+		} elseif ($daemon_task) {
 			do {
+				$q = new Queue();
 				// Fresh copy of script each time
-				system(__DIR__.'/scheduler.php '.$args);
+				$exec = __DIR__.'/scheduler.php '.PATH_APP.' ' .$args;
+				system($exec);
 				//$q->run();
 				sleep(1);
 			} while(1);
 		} else {
 			$q = new Queue();
-			for ($i=0;$i<15;$i++) {
-				$q->run();
+			$task = null;
+			if (!empty($argv[2])) {
+				// Here should be a task name
+				if (in_array ($argv[2], $q->getTaskNames())) {
+					$task = $argv[2];
+				}
+			}
+			for ($i=0;$i<10;$i++) {
+				$q->run($task);
 			}
 		}
 	}
