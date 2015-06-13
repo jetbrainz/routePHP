@@ -117,8 +117,8 @@ class Token extends Base
 
 	public function update($key, $lang, $translation)
 	{
-		if (!$lang || !$this->isPublished($lang)) {
-			$lang = $this->lang;
+		if (!$lang || $lang == 'en') {
+			return;
 		}
 
 		$query = "select * from tokens where brand=:brand and token_hash=:token_hash and lang='en'";
