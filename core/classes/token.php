@@ -166,7 +166,18 @@ class Token extends Base
 	{
 		return $this->lang;
 	}
-	
+
+	public function getLangName($lang=null)
+	{
+		if (!$lang && empty ($this->languages[$lang])) {
+			$lang = $this->lang;
+		}
+		if (!isset ($this->languages[$lang])) {
+			return false;
+		}
+		return $this->languages[$lang];
+	}
+
 	public function queueRun($task) {
 		$info = explode(':', $task['params']);
 		
