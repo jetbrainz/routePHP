@@ -70,6 +70,9 @@ try
 	if (APP_LEVEL == 'COMMAND') {
 		// No start point
 	}
+	if (APP_LEVEL == 'TESTS') {
+		// No start point
+	}
 	if (APP_LEVEL == 'PHPUNIT') {
 		//new Dispatcher('tests');
 	}
