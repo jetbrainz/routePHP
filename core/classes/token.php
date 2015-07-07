@@ -12,6 +12,7 @@ class Token extends Base
 	private $lang = 'en';
 	private $languages = array ('en' => 'English');
 	private $publishedLanguages = array ('en');
+	private $availableLanguages = array ('en');
 	
 	public function __construct($lang='en')
 	{
@@ -19,14 +20,19 @@ class Token extends Base
 
 		$languages = $this->getConfig('languages');
 		$publishedLanguages = $this->getConfig('published');
+		$availableLanguages = $this->getConfig('available');
+
 		if (is_array ($languages)) {
 			$this->languages = $languages;
 		}
 		if (is_array ($publishedLanguages)) {
 			$this->publishedLanguages = $publishedLanguages;
 		}
+		if (is_array ($availableLanguages)) {
+			$this->availableLanguages = $availableLanguages;
+		}
 
-		if ($this->isPublished($lang)) {
+		if ($this->isAvailable($lang)) {
 			$this->lang = $lang;
 		}
 	}
@@ -36,6 +42,11 @@ class Token extends Base
 		return (DEVMODE || $lang == 'en' || ($lang != 'en' && in_array ($lang, $this->publishedLanguages)));
 	}
 
+	public function isAvailable($lang)
+	{
+		return (DEVMODE || $lang == 'en' || ($lang != 'en' && in_array ($lang, $this->availableLanguages)));
+	}
+
 	public function getLanguages()
 	{
 		return $this->languages;
@@ -43,7 +54,7 @@ class Token extends Base
 
 	public function getList($lang=null)
 	{
-		if (!$lang || !$this->isPublished($lang)) {
+		if (!$lang || !$this->isAvailable($lang)) {
 			$lang = $this->lang;
 		}
 
@@ -65,7 +76,7 @@ class Token extends Base
 	
 	public function get($name, $lang=null)
 	{
-		if (!$lang || !$this->isPublished($lang)) {
+		if (!$lang || !$this->isAvailable($lang)) {
 			$lang = $this->lang;
 		}
 
@@ -157,7 +168,7 @@ class Token extends Base
 
 	public function setLang($lang='en')
 	{
-		if ($lang && $this->isPublished($lang)) {
+		if ($lang && $this->isAvailable($lang)) {
 			$this->lang = $lang;
 		}
 	}
