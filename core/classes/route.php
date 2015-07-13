@@ -22,7 +22,7 @@ class Route extends Config
 	/**
 	 * @var Token
 	 */
-	protected $token;
+	protected $Token;
 	
 	static protected $SCOPE=null;
 	
@@ -42,7 +42,7 @@ class Route extends Config
 			}
 		}
 		
-		$this->token = new Token();
+		$this->Token = new Token();
 		
 		$class = get_class($this);
 		
@@ -467,7 +467,7 @@ class Route extends Config
 	 */
 	public function setLang($lang)
 	{
-		$this->token->setLang($lang);
+		$this->Token->setLang($lang);
 	}
 	
 	/**
@@ -476,7 +476,7 @@ class Route extends Config
 	 */
 	public function getLang()
 	{
-		return $this->token->getLang();
+		return $this->Token->getLang();
 	}
 	
 	/**
@@ -489,10 +489,10 @@ class Route extends Config
 		if (is_array ($name)) {
 			$ret = array ();
 			foreach ($name as $k=>$v) {
-				$ret[$k] = $this->token->get($v);
+				$ret[$k] = $this->Token->get($v);
 			}
 		} else {
-			$ret = $this->token->get($name);
+			$ret = $this->Token->get($name);
 		}
 		return $ret;
 	}
@@ -517,7 +517,7 @@ class Route extends Config
 		$htmlc = count($htmlt);
 		
 		for ($i=1;$i<$htmlc;$i+=2) {
-			$value = $this->token->get($htmlt[$i]);
+			$value = $this->Token->get($htmlt[$i]);
 			$html = str_replace ('###'.$htmlt[$i].'###', $value, $html);
 		}
 		

@@ -11,7 +11,7 @@ class Redirect
 		'success', 'error'
 	);
 	
-	static public function index($message='')
+	static public function index($message=null)
 	{
 		self::sendRedirect('/');
 	}
@@ -24,32 +24,40 @@ class Redirect
 		self::sendRedirect($url);
 	}
 	
-	static public function errorHere($message='')
+	static public function errorHere($message=null)
 	{
-		Messenger::error($message);
+		if ($message !== null) {
+			Messenger::error($message);
+		}
 		self::sendRedirect(\Url::getPath());
 		exit;
 	}
 	
-	static public function successHere($message='')
+	static public function successHere($message=null)
 	{
-		Messenger::success($message);
+		if ($message !== null) {
+			Messenger::success($message);
+		}
 		self::sendRedirect(\Url::getPath());
 		exit;
 	}
 	
-	static public function success($message='')
+	static public function success($message=null)
 	{
-		Messenger::success($message);
+		if ($message !== null) {
+			Messenger::success($message);
+		}
 		//if (!Url::isSuccess()) {
 			self::sendRedirect(self::makeURL('success'));
 		//}
 		exit;
 	}
 	
-	static public function error($message='')
+	static public function error($message=null)
 	{
-		Messenger::error($message);
+		if ($message !== null) {
+			Messenger::error($message);
+		}
 		//if (!Url::isError()) {
 			self::sendRedirect(self::makeURL('error'));
 		//}

@@ -1,15 +1,15 @@
 <?php
-if (!defined('APP_LEVEL')) {
-	echo 'APP_LEVEL is not defined';
+if (!\RunLevel::defined()) {
+	echo 'RunLevel is not defined';
 	exit;
 }
 
-if (!defined('PATH_APP') && (APP_LEVEL == 'WEB' || APP_LEVEL == 'API')) {
+if (!defined('PATH_APP') && (\RunLevel::isWEB() || \RunLevel::isAPI())) {
 	echo 'PATH_APP is not defined';
 	exit;
 }
 
-if (APP_LEVEL == 'SCHEDULER' || APP_LEVEL == 'COMMAND') {
+if (\RunLevel::isSCHEDULER() || \RunLevel::isCOMMAND()) {
 	if (empty($argv[1])) {
 		echo 'PATH_APP should be provided as first argument';
 		exit;
@@ -17,7 +17,7 @@ if (APP_LEVEL == 'SCHEDULER' || APP_LEVEL == 'COMMAND') {
 	define ('PATH_APP', $argv[1]);
 }
 
-if (APP_LEVEL == 'PHPUNIT') {
+if (\RunLevel::isPHPUNIT()) {
 	define ('PATH_APP', getcwd());
 }
 
@@ -31,6 +31,7 @@ define ('PATH_CORE', __DIR__);
 define ('PATH_ETC', realpath(PATH_APP.'/etc'));
 define ('PATH_CLASSES', realpath(PATH_CORE.'/classes'));
 define ('PATH_MODULES', realpath(PATH_APP.'/modules'));
+define ('PATH_BUSINESS', realpath(PATH_APP.'/business'));
 define ('PATH_CORE_MODULES', realpath(PATH_CORE.'/modules'));
 define ('PATH_ROUTES', realpath(PATH_APP.'/routes'));
 define ('PATH_API', realpath(PATH_APP.'/api'));
@@ -61,22 +62,22 @@ require_once PATH_PROPEL_LIB.'/Propel.php';
 
 try
 {
-	if (APP_LEVEL == 'WEB') {
+	if (\RunLevel::isWEB()) {
 		new Dispatcher('routes');
 	}
-	if (APP_LEVEL == 'API') {
+	if (\RunLevel::isAPI()) {
 		new Dispatcher('api', 2);
 	}
-	if (APP_LEVEL == 'COMMAND') {
+	if (\RunLevel::isCOMMAND()) {
 		// No start point
 	}
-	if (APP_LEVEL == 'TESTS') {
+	if (\RunLevel::isTESTS()) {
 		// No start point
 	}
-	if (APP_LEVEL == 'PHPUNIT') {
+	if (\RunLevel::isPHPUNIT()) {
 		//new Dispatcher('tests');
 	}
-	if (APP_LEVEL == 'SCHEDULER') {
+	if (\RunLevel::isSCHEDULER()) {
 		$daemon = false;
 		$daemon_task = false;
 		$args = '';
@@ -149,6 +150,7 @@ function MainLoad($className)
 		PATH_CLASSES,
 		PATH_UTL,
 		PATH_CORE_UTL,
+		PATH_BUSINESS,
 	);
 
 	$className = strtolower($classNameCase = $className);
@@ -180,9 +182,12 @@ function MainLoad($className)
 			if (file_exists ($path.$dirNameFile.$classNameFile)) {
 				include_once $path.$dirNameFile.$classNameFile;
 			} elseif (file_exists ($path.$classNameFile)) {
+				//echo $path.$classNameFile.'<br />';
 				include_once $path.$classNameFile;
 			} elseif (file_exists ($path.'/'.$classNameFileNaked)) {
 				include_once $path.'/'.$classNameFileNaked;
+			} elseif (file_exists (PATH_APP.$classNameFile)) {
+				include_once PATH_APP.$classNameFile;
 			}
 		}
 	}

@@ -214,7 +214,13 @@ class Messenger extends Base
 		\Session::set('message-type', 'alert-success');
 		\Session::set('message', $str);
 	}
-	
+
+	static function text($str)
+	{
+		\Session::set('message-type', 'alert-default');
+		\Session::set('message', $str);
+	}
+
 	static function get()
 	{
 		return \Session::get('message');
