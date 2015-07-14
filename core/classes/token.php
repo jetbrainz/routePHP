@@ -52,6 +52,28 @@ class Token extends Base
 		return $this->languages;
 	}
 
+	public function getListToTranslate($lang)
+	{
+		if (!$lang || !$this->isAvailable($lang)) {
+			$lang = $this->lang;
+		}
+
+		$query = "select t.* from tokens t join tokens te on t.token_hash=te.token_hash and t.brand=te.brand and t.token_value=te.token_value and te.lang='en' where t.brand=:brand and t.lang=:lang";
+		$st = $this->db()->prepare($query);
+
+		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
+		$st->bindValue(':lang', $lang, PDO::PARAM_STR);
+
+		$st->execute();
+
+		$ret = array();
+		while ($t = $st->fetch(PDO::FETCH_ASSOC)) {
+			$ret[] = $t;
+		}
+
+		return $ret;
+	}
+
 	public function getList($lang=null)
 	{
 		if (!$lang || !$this->isAvailable($lang)) {
