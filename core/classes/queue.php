@@ -95,13 +95,8 @@ class Queue extends Base
 		$st->bindValue(':status', $status);
 		
 		$st->execute();
-		
-		$query = "update queue set processed=1 where id=:id";
-		
-		$st = $this->db()->prepare($query);
-		$st->bindValue(':id', $task['id']);
-		
-		$st->execute();
+
+		$this->close($task['id']);
 	}
 	
 	public function get($id=null, $task=null)
