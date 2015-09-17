@@ -181,13 +181,20 @@ function MainLoad($className)
 		foreach ($paths as $path) {
 			if (file_exists ($path.$dirNameFile.$classNameFile)) {
 				include_once $path.$dirNameFile.$classNameFile;
+			} elseif (file_exists ($path.strtolower($dirNameFile.$classNameFile))) {
+				include_once $path.strtolower($dirNameFile.$classNameFile);
 			} elseif (file_exists ($path.$classNameFile)) {
-				//echo $path.$classNameFile.'<br />';
 				include_once $path.$classNameFile;
+			} elseif (file_exists ($path.strtolower($classNameFile))) {
+				include_once $path.strtolower($classNameFile);
 			} elseif (file_exists ($path.'/'.$classNameFileNaked)) {
 				include_once $path.'/'.$classNameFileNaked;
+			} elseif (file_exists ($path.'/'.strtolower($classNameFileNaked))) {
+				include_once $path.'/'.strtolower($classNameFileNaked);
 			} elseif (file_exists (PATH_APP.$classNameFile)) {
 				include_once PATH_APP.$classNameFile;
+			} elseif (file_exists (PATH_APP.strtolower($classNameFile))) {
+				include_once PATH_APP.strtolower($classNameFile);
 			}
 		}
 	}
@@ -217,9 +224,12 @@ function ExtLoad($className) {
 	foreach ($paths as $path) {
 		if (file_exists ($path.$classNameFile)) {
 			include_once $path.$classNameFile;
-		}
-		if (file_exists ($path.$className.$classNameFile)) {
+		} elseif (file_exists ($path.$className.$classNameFile)) {
 			include_once $path.$className.$classNameFile;
+		} elseif (file_exists ($path.strtolower($classNameFile))) {
+			include_once $path.strtolower($classNameFile);
+		} elseif (file_exists ($path.strtolower($className.$classNameFile))) {
+			include_once $path.strtolower($className.$classNameFile);
 		}
 	}
 }
