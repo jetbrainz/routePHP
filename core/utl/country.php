@@ -13,8 +13,16 @@ class Country
 		return isset(self::$list[$code]);
 	}
 	
-	static public function getCodeByIP($ip)
+	static public function getCodeByIP($ip=null)
 	{
+		if (!$ip && isset ($_SERVER['REMOTE_ADDR'])) {
+			$ip = $_SERVER['REMOTE_ADDR'];
+		}
+
+		if (!$ip) {
+			return 'CY';
+		}
+
 		$fc = strtoupper(trim(file_get_contents("http://ipinfo.io/{$ip}/country")));
 		return $fc;
 	}

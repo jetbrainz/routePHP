@@ -25,7 +25,7 @@ class Dispatcher
 		}
 
 		$class = new $class;
-		
+
 		$class->run();
 		
 		$method = $this->getMethodName($actionOffset+1);

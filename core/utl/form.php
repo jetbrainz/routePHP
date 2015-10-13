@@ -18,7 +18,7 @@ class Form
 		return htmlspecialchars($value);
 	}
 	
-	static public function render($form, $output=false)
+	static public function render($form, $output=false, $values=null)
 	{
 		try {
 			
@@ -33,7 +33,7 @@ class Form
 		}
 		
 		if (isset($form['form']['view'])) {
-			$view = "PFBC\\View\\{$form['form']['view']}";
+			$view = "PFBC\\View\\".$form['form']['view'];
 		} else {
 			$view = "PFBC\\View\\SideBySide";
 		}
@@ -60,6 +60,9 @@ class Form
 			}
 		}
 		foreach ($form['elements'] as $el) {
+			if (isset ($el['name']) && isset ($values[$el['name']])) {
+				$el['value'] = $values[$el['name']];
+			}
 			$Element = 'PFBC\\Element\\' . $el['type'];
 		
 			$objects2ajust = array ('select', 'textbox', 'textarea', 'number', 'password', 'phone', 'email');

@@ -44,14 +44,16 @@ class Config
 		}
 	}
 	
-	protected function getConfig($name) {
+	protected function getConfig($name)
+	{
 		if (isset($this->config[$name])) {
 			return $this->config[$name];
 		}
 		return null;
 	}
 	
-	public function getVar($group, $name, $lang=null) {
+	public function getVar($group, $name, $lang=null)
+	{
 		$path = array ();
 
 		$path[] = realpath(PATH_VAR.'/'.$group.'/'.str_replace('\\', '/', strtolower(get_class($this))).'/'.$name);
@@ -73,7 +75,11 @@ class Config
 		return null;
 	}
 	
-	private function returnVar($path) {
+	private function returnVar($path)
+	{
+		if (empty ($path)) {
+			return false;
+		}
 		if (stristr(PATH_VAR, $path) === null) {
 			return false;
 		}

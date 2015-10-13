@@ -30,6 +30,7 @@ class RESTful
 		if ($data) {
 			echo self::convertData($data, $type);
 		}
+		exit;
 	}
 
 	private function convertData($data, $type)
