@@ -62,6 +62,9 @@ class Config
 		$path[] = realpath(PATH_VAR.'/'.$group.'/'.BRAND.'/'.$name);
 		
 		foreach ($path as $p) {
+			if (!$p) {
+				continue;
+			}
 			if ($lang) {
 				$pl = str_replace('/'.$name, '/'.$lang.'/'.$name, $p);
 				if (($ret = $this->returnVar($pl)) !== null) {
