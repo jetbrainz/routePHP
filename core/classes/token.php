@@ -200,6 +200,15 @@ class Token extends Base
 		return $this->lang;
 	}
 
+	public function getDirection()
+	{
+		if ($this->getLang() == 'ar') {
+			return 'rtl';
+		} else {
+			return 'ltr';
+		}
+	}
+
 	public function getLangName($lang=null)
 	{
 		if (!$lang && empty ($this->languages[$lang])) {
