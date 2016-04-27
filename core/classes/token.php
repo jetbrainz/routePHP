@@ -188,6 +188,18 @@ class Token extends Base
 		return true;
 	}
 
+	public function delete($hash)
+	{
+		$query = "delete from tokens where brand=:brand and token_hash=:token_hash";
+		$st = $this->db()->prepare($query);
+
+		$st->bindValue(':token_hash', $hash, PDO::PARAM_STR);
+		$st->bindValue(':brand', BRAND, PDO::PARAM_STR);
+		$st->execute();
+
+		return true;
+	}
+
 	public function setLang($lang='en')
 	{
 		if ($lang && $this->isAvailable($lang)) {
