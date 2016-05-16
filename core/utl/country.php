@@ -15,6 +15,7 @@ class Country
 	
 	static public function getCodeByIP($ip=null)
 	{
+
 		if ($ip === null) {
 			$ip = !empty($_SERVER['HTTP_X_FORWARDED_FOR'])
 				? $_SERVER['HTTP_X_FORWARDED_FOR']
@@ -24,8 +25,9 @@ class Country
 		if (!$ip) {
 			return 'CY';
 		}
+		$fc = geoip_country_code_by_name($ip);
 
-		$fc = strtoupper(trim(file_get_contents("http://ipinfo.io/{$ip}/country")));
+		//$fc = strtoupper(trim(file_get_contents("http://ipinfo.io/{$ip}/country")));
 		return $fc;
 	}
 	
