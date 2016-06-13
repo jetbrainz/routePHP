@@ -17,6 +17,10 @@ class DB
 	static public function getInstance($dsn, $username, $password, $options)
 	{
 		$hash = md5($dsn . $username . $password);
+		if (!is_array ($options)) {
+			$options = array ();
+		}
+		$options[PDO::ATTR_TIMEOUT] = "1";
 		
 		if (!isset (self::$instances[$hash])) {
 			try {
