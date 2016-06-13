@@ -105,9 +105,9 @@ class Queue extends Base
 			$id = intval($id);
 			$query = "select * from queue where id=$id";
 		} elseif ($task !== null) {
-			$query = "select * from queue where processed=0 and skipped=0 and brand=:brand and task=:task order by id limit 1";
+			$query = "select * from queue where processed=0 and skipped=0 and brand=:brand and task=:task order by id desc limit 1";
 		} else {
-			$query = "select * from queue where processed=0 and skipped=0 and brand=:brand order by id limit 1";
+			$query = "select * from queue where processed=0 and skipped=0 and brand=:brand order by id desc limit 1";
 		}
 		
 		$st = $this->db()->prepare($query);

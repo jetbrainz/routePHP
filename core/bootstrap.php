@@ -70,6 +70,14 @@ try
 	}
 	if (\RunLevel::isCOMMAND()) {
 		// No start point
+		$module = $argv[2];
+		$command = $argv[3];
+		if (class_exists($module)) {
+			$module = new $module;
+			if (method_exists($module, 'command'.$command)) {
+				$module->{'command'.$command}();
+			}
+		}
 	}
 	if (\RunLevel::isTESTS()) {
 		// No start point

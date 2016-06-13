@@ -6,6 +6,8 @@
  */
 class Mailer extends Config
 {
+	const Q_MAIL = 'mail';
+
 	public function __construct()
 	{
 		parent::__construct();

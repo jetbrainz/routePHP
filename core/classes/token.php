@@ -8,6 +8,8 @@
 class Token extends Base
 {
 	const BASE_LANG = 'en';
+
+	const Q_TOKENS = 'tokens';
 	
 	private $lang = 'en';
 	private $languages = array ('en' => 'English');
