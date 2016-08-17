@@ -6,12 +6,18 @@ class Country
 	static private $listPhonesCodes = null;
 	static private $listNames;
 	static private $list;
+    static private $excludeList = ['US', 'UM'];
 	
 	static public function isExist($code)
 	{
 		self::formatList();
 		return isset(self::$list[$code]);
 	}
+
+	static public function setExcludeList($excludeList)
+    {
+        self::$excludeList = $excludeList;
+    }
 	
 	static public function getCodeByIP($ip=null)
 	{
@@ -70,29 +76,26 @@ class Country
 		return false;
 	}
 	
-	static public function getList($excludeList=null)
+	static public function getList()
 	{
-		self::formatList($excludeList);
+		self::formatList();
 		return self::$list;
 	}
 
-	static public function getListCodes($excludeList=null)
+	static public function getListCodes()
 	{
-		self::formatList($excludeList);
+		self::formatList();
 		return self::$listCodes;
 	}
 	
-	static public function getListNames($excludeList=null)
+	static public function getListNames()
 	{
-		self::formatList($excludeList);
+		self::formatList();
 		return self::$listNames;
 	}
 	
-	static private function formatList($excludeList=null)
+	static private function formatList()
 	{
-	    if (!is_array($excludeList)) {
-            $excludeList = array('US','UM');
-        }
 		if (self::$listCodes !== null) {
 			return;
 		}
@@ -101,7 +104,7 @@ class Country
 		$list = array ();
 		preg_match_all('/([^\;]+);(\w{2})/', self::$listSrc, $m);
 		foreach ($m[2] as $index=>$code) {
-		    if (in_array($code, $excludeList)) {
+		    if (in_array($code, self::$excludeList)) {
                 continue;
             }
 			$listCodes[] = trim($code);
