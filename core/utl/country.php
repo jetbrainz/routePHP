@@ -70,26 +70,29 @@ class Country
 		return false;
 	}
 	
-	static public function getList()
+	static public function getList($excludeList=null)
 	{
-		self::formatList();
+		self::formatList($excludeList);
 		return self::$list;
 	}
-	
-	static public function getListCodes()
+
+	static public function getListCodes($excludeList=null)
 	{
-		self::formatList();
+		self::formatList($excludeList);
 		return self::$listCodes;
 	}
 	
-	static public function getListNames()
+	static public function getListNames($excludeList=null)
 	{
-		self::formatList();
+		self::formatList($excludeList);
 		return self::$listNames;
 	}
 	
-	static private function formatList()
+	static private function formatList($excludeList=null)
 	{
+	    if (!is_array($excludeList)) {
+            $excludeList = array('US','UM');
+        }
 		if (self::$listCodes !== null) {
 			return;
 		}
@@ -98,9 +101,9 @@ class Country
 		$list = array ();
 		preg_match_all('/([^\;]+);(\w{2})/', self::$listSrc, $m);
 		foreach ($m[2] as $index=>$code) {
-			if ($code == 'US' || $code == 'UM') {
-				continue;
-			}
+		    if (in_array($code, $excludeList)) {
+                continue;
+            }
 			$listCodes[] = trim($code);
 			$listNames[] = trim($m[1][$index]);
 			$list[$code] = trim($m[1][$index]);
