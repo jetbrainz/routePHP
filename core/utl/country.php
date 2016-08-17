@@ -17,6 +17,8 @@ class Country
 	static public function setExcludeList($excludeList)
     {
         self::$excludeList = $excludeList;
+        self::$listCodes = null;
+        self::formatList();
     }
 	
 	static public function getCodeByIP($ip=null)
