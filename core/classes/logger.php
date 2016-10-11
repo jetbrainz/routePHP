@@ -34,8 +34,6 @@ class Logger extends Config
 		
 		$q = new Queue('include logging' && false);
 
-        $graylogServer = 'services.fxgrow.com';
-
         $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
         $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
 
@@ -71,17 +69,25 @@ class Logger extends Config
 		$callers = debug_backtrace();
 
 		$this->message = $args[0];
-		
+
+        $context = [];
+        if (LOGGED) {
+            $context['user_id'] = LOGGED;
+        }
+        if (LOGGED_EMAIL) {
+            $context['user_email'] = LOGGED_EMAIL;
+        }
+
 		$method = strtolower($method);
 		try {
 			if (in_array (strtoupper($method), $this->levels)) {
-				$this->log->$method(
-					$callers[2]['function'].':'.$callers[1]['line'].' - '
-					.$args[0]
+				return $this->log->$method(
+                    "{$args[0]}\n{$callers[2]['file']}:{$callers[1]['line']}",
+                    $context
 				);
 			}
 		} catch (\Exception $e) {
-
+		    return false;
 		}
 	}
 	
