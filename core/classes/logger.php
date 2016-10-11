@@ -5,7 +5,7 @@
  *
  ** @author Valentin Balt <valentin.balt@gmail.com>
  */
-class Logger
+class Logger extends Config
 {
 	const DEBUG		= 'DEBUG';
 	const WARNING	= 'WARNING';
@@ -22,14 +22,34 @@ class Logger
 	
 	public function __construct($className)
 	{
+	    parent::__construct();
+
+	    $gelf = $this->getConfig('gelf');
+
 		$logName = str_replace ('\\', '-', $className);
-		
+
+        require_once PATH_EXT.'/monolog/vendor/autoload.php';
+
 		$this->log = new Monolog\Logger($className);
 		
 		$q = new Queue('include logging' && false);
-		
-		$this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
-		$this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
+
+        $graylogServer = 'services.fxgrow.com';
+
+        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
+        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
+
+        if (!empty($gelf)) {
+            $gelfHandler = new Monolog\Handler\GelfHandler(
+                new Gelf\Publisher(
+                    new Gelf\Transport\UdpTransport($gelf['url'], $gelf['port'])
+                ),
+                Monolog\Logger::DEBUG
+            );
+
+            $this->log->pushHandler($gelfHandler);
+        }
+
 		if (!preg_match ('/mail/i', $className)) {
 			require_once PATH_EXT.'/monolog_extend/QueueMailerHandler.php';
 			$this->log->pushHandler(new \Monolog\Handler\QueueMailerHandler($q, Monolog\Logger::ERROR));
@@ -61,7 +81,7 @@ class Logger
 				);
 			}
 		} catch (\Exception $e) {
-			
+
 		}
 	}
 	
