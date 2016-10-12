@@ -113,7 +113,6 @@ class Queue extends Base
 	
 	public function get($id=null, $task=null)
 	{
-        $this->logger->debug("Start getting task id={$id}, task=$task");
 		if ($id !== null) {
 			$id = intval($id);
 			$query = "select * from queue where id=$id";
@@ -131,7 +130,7 @@ class Queue extends Base
 		
 		$st->execute();
 		if (!$f=$st->fetch(PDO::FETCH_ASSOC)) {
-            $this->logger->error("No task found for id={$id}, task=$task");
+            $this->logger->error("Error get tasks for id={$id}, task=$task");
 			return false;
 		}
 
