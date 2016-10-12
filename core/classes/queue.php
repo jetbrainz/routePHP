@@ -19,6 +19,10 @@ class Queue extends Base
 		if (!empty ($conf)) {
 			$this->taskMapper = $conf;
 		}
+
+		if (empty ($this->logger)) {
+		    $this->logger = new \Logger(get_class($this));
+        }
 	}
 
 	public function getTaskNames()
@@ -37,12 +41,16 @@ class Queue extends Base
 	public function run($task=null)
 	{
 		$task = $this->get(null, $task);
-		
+
 		if (!$task) {
 			return null;
 		}
-		
+
+        $this->logger->debug("Get task to execute: ".json_encode($task));
+
 		if (!isset ($this->taskMapper[$task['task']])) {
+            $this->logger->error("Task '{$task['task']}' undefined");
+
 			$query = "update queue set skipped=1 where id=:id";
 
 			$st = $this->db()->prepare($query);
@@ -56,6 +64,8 @@ class Queue extends Base
 		$o = new $this->taskMapper[$task['task']];
 		
 		if (!method_exists($o, 'queueRun')) {
+            $this->logger->error("Class '".get_class($o)."' has no method 'queueRun'");
+
 			$query = "update queue set skipped=1 where id=:id";
 
 			$st = $this->db()->prepare($query);
@@ -97,10 +107,13 @@ class Queue extends Base
 		$st->execute();
 
 		$this->close($task['id']);
+
+        $this->logger->debug("Task '{$task['task']}' finished with result: ".json_encode($out_params));
 	}
 	
 	public function get($id=null, $task=null)
 	{
+        $this->logger->debug("Start getting task id={$id}, task=$task");
 		if ($id !== null) {
 			$id = intval($id);
 			$query = "select * from queue where id=$id";
@@ -118,9 +131,11 @@ class Queue extends Base
 		
 		$st->execute();
 		if (!$f=$st->fetch(PDO::FETCH_ASSOC)) {
+            $this->logger->error("No task found for id={$id}, task=$task");
 			return false;
 		}
-		
+
+        $this->logger->debug("Task found: ".json_encode($f));
 		return $f;
 	}
 	
@@ -131,11 +146,13 @@ class Queue extends Base
 
 		$query = "update queue set processed=1 where id=$id";
 		if (!$this->db()->query($query)) {
+            $this->logger->error("Can not close task id={$id}");
 			return false;
 		}
 
 		$query = "update queue set processed=0 where parent_id=$id and processed=2 and skipped=0";
 		if (!$this->db()->query($query)) {
+            $this->logger->error("Can not close parent task for id={$id}");
 			return false;
 		}
 
@@ -149,6 +166,7 @@ class Queue extends Base
 		$query = "update queue set skipped=0, processed=0 where id=$id";
 		
 		if (!$this->db()->query($query)) {
+            $this->logger->error("Can not re-open task id={$id}");
 			return false;
 		}
 		
@@ -157,6 +175,8 @@ class Queue extends Base
 	
 	public function create($task, $params, $owner=null, $owner_id=null, $parent_id=null)
 	{
+        $this->logger->debug("Create task: ".json_encode(func_get_args()));
+
 		$query = "insert into queue (task, params, brand, owner, owner_id, parent_id, processed) values (:task, :params, :brand, :owner, :owner_id, :parent_id, :processed)";
 		
 		$st = $this->db()->prepare($query);
@@ -183,11 +203,21 @@ class Queue extends Base
 			$st->bindValue(':processed', 0, PDO::PARAM_INT);
 		}
 
-		return $st->execute() ? $this->db()->lastInsertId() : false;
+		if (!$st->execute()) {
+            $this->logger->error("Can not create task");
+		    return false;
+        }
+
+        $ret = $this->db()->lastInsertId();
+
+        $this->logger->debug("Task created: $ret");
+		return $ret;
 	}
 	
 	public function getList($task, $processed=false, $owner=null, $owner_id=null, $sorting=null, $parent_id=null)
 	{
+        $this->logger->debug("Getting tasks list: ".json_encode(func_get_args()));
+
 		$processed = $processed ? 1 : 0;
 		$sort = ($sorting==self::SORT_DESC) ? 'desc' : 'asc';
 		
@@ -218,6 +248,7 @@ class Queue extends Base
 		}
 		
 		if (!$st->execute()) {
+            $this->logger->error("Can not get tasks list");
 			return null;
 		}
 		
@@ -226,12 +257,15 @@ class Queue extends Base
 		while ($f=$st->fetch(PDO::FETCH_ASSOC)) {
 			$ret[] = $f;
 		}
-		
+
+        $this->logger->debug("List of tasks (".count($ret).") retrieved. ");
 		return $ret;
 	}
 
 	public function getSearchList($task=null, $processed=null, $skipped=null, $owner=null, $owner_id=null,  $page=1, $lpp=20, $sortField='id', $sortWay=self::SORT_DESC)
 	{
+        $this->logger->debug("Getting tasks search list: ".json_encode(func_get_args()));
+
 		$query = "select * from queue where brand=:brand";
 
 		if ($task) {
@@ -271,6 +305,7 @@ class Queue extends Base
 		}
 
 		if (!$st->execute()) {
+            $this->logger->error("Can not get tasks search list");
 			return null;
 		}
 
@@ -280,6 +315,7 @@ class Queue extends Base
 			$ret[] = $f;
 		}
 
+        $this->logger->debug("Search list of tasks (".count($ret).") retrieved. ");
 		return $ret;
 	}
 
