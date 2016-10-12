@@ -130,7 +130,6 @@ class Queue extends Base
 		
 		$st->execute();
 		if (!$f=$st->fetch(PDO::FETCH_ASSOC)) {
-            $this->logger->error("Error get tasks for id={$id}, task=$task");
 			return false;
 		}
 
