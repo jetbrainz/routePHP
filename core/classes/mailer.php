@@ -22,9 +22,11 @@ class Mailer extends Config
 	
 	private function configureSwift($transportName='mail')
 	{
-		if ((@include 'swift_required.php') === false) {
-			require 'Swift/swift_required.php';
-		}
+	    if (!class_exists('Swift')) {
+            if ((@include 'swift_required.php') === false) {
+                require 'Swift/swift_required.php';
+            }
+        }
 
 		$opt = $this->getConfig('options');
 		
