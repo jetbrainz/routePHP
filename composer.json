@@ -21,7 +21,8 @@
     "classmap": [
       "core/classes",
       "core/modules",
-      "core/utl"
+      "core/utl",
+      "core/runLevel.php"
     ]
   }
 }
