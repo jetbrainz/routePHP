@@ -57,9 +57,6 @@ define ('LOGGED_EMAIL', \Session::get('logged_email'));
 // Include project config
 require_once PATH_APP.'/config.php';
 
-// Include Propel
-require_once PATH_PROPEL_LIB.'/Propel.php';
-
 try
 {
 	if (\RunLevel::isWEB()) {
