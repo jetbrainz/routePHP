@@ -1,5 +1,6 @@
 {
   "name": "routephp/routephp",
+  "license": "MIT",
   "version": "3.0.0",
   "require-dev": {
     "propel/propel": "~2.0@dev",
