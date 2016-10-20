@@ -22,7 +22,7 @@
       "core/classes",
       "core/modules",
       "core/utl",
-      "core/runLevel.php"
+      "core/runlevel.php"
     ]
   }
 }
