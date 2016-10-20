@@ -2,7 +2,7 @@
   "name": "routephp/routephp",
   "license": "MIT",
   "version": "3.0.0",
-  "require-dev": {
+  "require": {
     "propel/propel": "~2.0@dev",
     "pfbc/pfbc": "dev-Bootstrap3",
     "monolog/monolog": "1.*"
