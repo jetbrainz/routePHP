@@ -30,8 +30,6 @@ class Logger extends Config
 
 		$this->log = new Monolog\Logger($className);
 		
-		$q = new Queue('include logging' && false);
-
         	$this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
 	        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
 
