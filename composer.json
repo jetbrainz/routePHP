@@ -17,11 +17,11 @@
       "url": "https://github.com/jetbrainz/php-form-builder-class.git"
     }
   ],
-  "autoload": [
+  "autoload": {
     "classmap": [
-      'core/classes',
-      'core/modules',
-      'core/utl',
+      "core/classes",
+      "core/modules",
+      "core/utl"
     ]
-  ]
+  }
 }
