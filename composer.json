@@ -3,7 +3,8 @@
   "version": "3.0.0",
   "require-dev": {
     "propel/propel": "~2.0@dev",
-    "monolog/monolog": "1.*"
+    "monolog/monolog": "1.*",
+    "pfbc/pfbc": "Bootstrap3"
   },
   "repositories": [
     {
