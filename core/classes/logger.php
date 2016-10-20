@@ -28,40 +28,23 @@ class Logger extends Config
 
 		$logName = str_replace ('\\', '-', $className);
 
-        require_once PATH_EXT.'/monolog/vendor/autoload.php';
-
 		$this->log = new Monolog\Logger($className);
 		
 		$q = new Queue('include logging' && false);
 
-        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
-        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
+        	$this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
+	        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
 
-        if (!empty($gelf)) {
-            $gelfHandler = new Monolog\Handler\GelfHandler(
-                new Gelf\Publisher(
-                    new Gelf\Transport\UdpTransport($gelf['url'], $gelf['port'])
-                ),
-                Monolog\Logger::DEBUG
-            );
+        	if (!empty($gelf)) {
+            		$gelfHandler = new Monolog\Handler\GelfHandler(
+                		new Gelf\Publisher(
+                	    		new Gelf\Transport\UdpTransport($gelf['url'], $gelf['port'])
+	                	),
+        	        	Monolog\Logger::DEBUG
+            		);
 
-            $this->log->pushHandler($gelfHandler);
-        }
-
-		if (!preg_match ('/mail/i', $className)) {
-			require_once PATH_EXT.'/monolog_extend/QueueMailerHandler.php';
-			$this->log->pushHandler(new \Monolog\Handler\QueueMailerHandler($q, Monolog\Logger::ERROR));
-		}
-		/*
-		$mailer = new \Mailer('include logging'==false);
-		$swift = $mailer->getSwiftMailer();
-		$message = Swift_Message::newInstance('subj')
-					->setTo(ADMINEMAIL)
-					->setFrom(ADMINEMAIL);
-		
-		$this->log->pushHandler(new \Monolog\Handler\SwiftMailerHandler($swift, $message, Logger::ERROR));
-		 * 
-		 */
+            		$this->log->pushHandler($gelfHandler);
+	        }
 	}
 	
 	public function __call($method, $args)
