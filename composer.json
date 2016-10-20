@@ -5,8 +5,10 @@
   "minimum-stability": "dev",
   "require": {
     "propel/propel": "~2.0@dev",
-    "pfbc/pfbc": "dev-routephp",
     "monolog/monolog": "1.*"
+  },
+  "require-dev": {
+      "pfbc/pfbc": "dev-routephp"
   },
   "repositories": [
     {
