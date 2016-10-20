@@ -4,7 +4,7 @@
   "version": "3.0.0",
   "require": {
     "propel/propel": "~2.0@dev",
-    "pfbcbs3/pfbcbs3": "dev-routephp",
+    "pfbc/pfbc": "dev-routephp",
     "monolog/monolog": "1.*"
   },
   "repositories": [
