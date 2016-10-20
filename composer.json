@@ -5,7 +5,7 @@
   "minimum-stability": "dev",
   "require": {
     "propel/propel": "~2.0@dev",
-    "pfbcbs3/pfbcbs3": "dev-master",
+    "pfbcbs3/pfbcbs3": "1.*",
     "monolog/monolog": "1.*"
   },
   "repositories": [
