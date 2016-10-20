@@ -9,40 +9,49 @@ class Config
 {
 	protected $config = array();
 	
-	public function __construct()
-	{
-		$class = strtolower(str_replace('\\', '/', get_class($this)));
-		
-		if (defined ('BRAND')) {
-			$file_brand = PATH_ETC.'/brands/'.BRAND.'/'.$class.'.php';
-		}
-		$file = PATH_ETC.'/'.$class.'.php';
-		
-		$local_config = array ();
-		
-		if (file_exists($file)) {
-			$config = array();
-			include $file;
-			$local_config = array_merge ($local_config, $config);
-		}
-		if (file_exists($file_brand)) {
-			include $file_brand;
-			$local_config = array_merge_recursive_distinct ($local_config, $config);
-		}
-		
-		$file = PATH_ETC.'/global.php';
-		
-		if (file_exists($file)) {
-			include $file;
-			$config = array_merge($config, $local_config);
-		}
-		
-		if (isset ($config)) {
-			foreach ($config as $k=>$v) {
-				$this->config[$k] = $v;
-			}
-		}
-	}
+    public function __construct()
+    {
+        $class = strtolower(str_replace('\\', '/', get_class($this)));
+
+        if (defined ('BRAND')) {
+            $file_brand = PATH_ETC.'/brands/'.BRAND.'/'.$class.'.php';
+        }
+        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.'/'.$class.'.local.php')) {
+            // Try to load dev (local) config if exists and DEVMODE = true
+            $file = PATH_ETC.'/'.$class.'.local.php';
+        } else {
+            $file = PATH_ETC.'/'.$class.'.php';
+        }
+
+        $local_config = array ();
+
+        if (file_exists($file)) {
+            $config = array();
+            include $file;
+            $local_config = array_merge ($local_config, $config);
+        }
+        if (file_exists($file_brand)) {
+            include $file_brand;
+            $local_config = array_merge_recursive_distinct ($local_config, $config);
+        }
+
+        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.'/global.local.php')) {
+            $file = PATH_ETC.'/global.local.php';
+        } else {
+            $file = PATH_ETC.'/global.php';
+        }
+
+        if (file_exists($file)) {
+            include $file;
+            $config = array_merge($config, $local_config);
+        }
+
+        if (isset ($config)) {
+            foreach ($config as $k=>$v) {
+                $this->config[$k] = $v;
+            }
+        }
+    }
 	
 	protected function getConfig($name)
 	{
