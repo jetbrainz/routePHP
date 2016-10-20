@@ -2,7 +2,6 @@
   "name": "routephp/routephp",
   "license": "MIT",
   "version": "3.0.0",
-  "minimum-stability": "dev",
   "require": {
     "propel/propel": "~2.0@dev",
     "pfbcbs3/pfbcbs3": "1.*@dev",
