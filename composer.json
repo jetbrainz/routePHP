@@ -16,5 +16,12 @@
       "type": "vcs",
       "url": "https://github.com/jetbrainz/php-form-builder-class.git"
     }
+  ],
+  "autoload": [
+    "classmap": [
+      'core/classes',
+      'core/modules',
+      'core/utl',
+    ]
   ]
 }
