@@ -5,7 +5,8 @@
   "minimum-stability": "dev",
   "require": {
     "propel/propel": "~2.0@dev",
-    "monolog/monolog": "1.*"
+    "monolog/monolog": "1.*",
+    "graylog2/gelf-php": "~1.2"
   },
   "require-dev": {
       "pfbc/pfbc": "dev-routephp"
