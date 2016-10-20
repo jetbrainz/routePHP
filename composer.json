@@ -1,7 +1,7 @@
 {
   "name": "routePHP",
   "version": "3.0.0",
-  "require-dev": {
+  "require": {
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
     "pfbc/pfbc": "Bootstrap3"
