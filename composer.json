@@ -4,7 +4,7 @@
   "require": {
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
-    "pfbc/pfbc": "Bootstrap3"
+    "pfbc/pfbc": "dev-Bootstrap3"
   },
   "repositories": [
     {
