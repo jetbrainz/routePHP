@@ -4,7 +4,7 @@
   "version": "3.0.0",
   "require": {
     "propel/propel": "~2.0@dev",
-    "pfbcbs3/pfbcbs3": "dev-1.0.0",
+    "pfbcbs3/pfbcbs3": "dev-bs3",
     "monolog/monolog": "1.*"
   },
   "repositories": [
