@@ -7,12 +7,12 @@
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
     "graylog2/gelf-php": "~1.2",
-    "JetBrainz/pfbc": "dev-routephp"
+    "JetBrainz/pfbc": "dev-master"
   },
   "repositories": [
     {
       "type": "vcs",
-      "url": "https://github.com/jetbrainz/php-form-builder-class.git"
+      "url": "https://github.com/jetbrainz/pfbc.git"
     }
   ],
   "autoload": {
