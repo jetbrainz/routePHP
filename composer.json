@@ -7,7 +7,7 @@
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
     "graylog2/gelf-php": "~1.2",
-    "pfbc/pfbc": "dev-master"
+    "pfbc/pfbc": "dev-routephp as 1.0.0"
   },
   "repositories": [
     {
