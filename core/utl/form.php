@@ -1,11 +1,11 @@
 <?php
-require_once PATH_EXT.'/pfbc/PFBC/Form.php';
-
 /**
  * Description of form
  *
  ** @author Valentin Balt <valentin.balt@gmail.com>
  */
+use PFBC;
+
 class Form
 {
 	const ELEMENTS = 'elements';
