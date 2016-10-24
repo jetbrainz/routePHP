@@ -1,5 +1,5 @@
 {
-  "name": "routePHP/routePHP",
+  "name": "JetBrainz/routePHP",
   "license": "MIT",
   "version": "3.0.0",
   "minimum-stability": "dev",
@@ -7,7 +7,7 @@
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
     "graylog2/gelf-php": "~1.2",
-    "pfbc/pfbc": "dev-routephp as 1.0.0"
+    "JetBrainz/pfbc": "dev-routephp"
   },
   "repositories": [
     {
