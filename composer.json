@@ -3,18 +3,18 @@
   "license": "MIT",
   "version": "3.0.0",
   "minimum-stability": "dev",
-  "require": {
-    "propel/propel": "~2.0@dev",
-    "monolog/monolog": "1.*",
-    "graylog2/gelf-php": "~1.2",
-    "JetBrainz/pfbc": "dev-master"
-  },
   "repositories": [
     {
       "type": "vcs",
       "url": "https://github.com/jetbrainz/pfbc.git"
     }
   ],
+  "require": {
+    "propel/propel": "~2.0@dev",
+    "monolog/monolog": "1.*",
+    "graylog2/gelf-php": "~1.2",
+    "JetBrainz/pfbc": "dev-master"
+  },
   "autoload": {
     "classmap": [
       "core/classes",
