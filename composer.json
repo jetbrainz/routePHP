@@ -12,10 +12,8 @@
   "require": {
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
-    "graylog2/gelf-php": "~1.2"
-  },
-  "require-dev": {
-    "JetBrainz/pfbc": "dev-master"
+    "graylog2/gelf-php": "~1.2",
+    "JetBrainz/pfbc": "@dev"
   },
   "autoload": {
     "classmap": [
