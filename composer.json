@@ -13,7 +13,7 @@
     "propel/propel": "~2.0@dev",
     "monolog/monolog": "1.*",
     "graylog2/gelf-php": "~1.2",
-    "JetBrainz/pfbc": "dev-master"
+    "JetBrainz/pfbc": "~1.0.0@dev"
   },
   "autoload": {
     "classmap": [
