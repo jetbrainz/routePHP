@@ -24,5 +24,10 @@
       "core/utl",
       "core/runlevel.php"
     ]
+  },
+  "scripts": {
+    "post-install-cmd": [
+      "php -f orm/build.php"
+    ]
   }
 }
