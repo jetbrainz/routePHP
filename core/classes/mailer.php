@@ -133,7 +133,9 @@ class Mailer extends Config
 				$i['email_subject'], 
 				$i['email_html'], 
 				empty($i['email_from']) ? null : $i['email_from'], 
-				!empty($i['text_only']));
+				!empty($i['text_only']),
+				empty($i['email_attachments']) ? null : $i['email_attachments']
+		);
 		
 		return true;
 	}
