@@ -52,8 +52,9 @@ class Mailer extends Config
 	 * @param string $subject Subject of email
 	 * @param string $text Message to send (HTML)
 	 * @param string $from Optional. From address. Leave empty to use "info@yourdomain.tld"
+	 * @param array $attachments Optional. ['name' => 'FILENAME', 'type' => 'MIME', 'data' => 'CONTENT']
 	 */
-	public function send($address, $subject, $text, $from=null, $text_only=false)
+	public function send($address, $subject, $text, $from=null, $text_only=false, $attachments=null)
 	{
 		if (!$from) {
 			$from = $this->getConfig('from');
@@ -102,6 +103,16 @@ class Mailer extends Config
 					->addPart($text);
 			} else {
 				$message->setBody($text);
+			}
+
+			if (!empty ($attachments)) {
+				foreach ($attachments as $adata) {
+					$attachment = Swift_Attachment::newInstance()
+						->setFilename($adata['name'])
+						->setContentType($adata['type'])
+						->setBody($adata['data']);
+					$message->attach($attachment);
+				}
 			}
 
 			$ret = $mailer->send($message);
