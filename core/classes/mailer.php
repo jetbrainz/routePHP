@@ -106,13 +106,35 @@ class Mailer extends Config
 			}
 
 			if (!empty ($attachments)) {
+			    $zipped = [];
 				foreach ($attachments as $adata) {
-					$attachment = Swift_Attachment::newInstance()
-						->setFilename($adata['name'])
-						->setContentType($adata['type'])
-						->setBody($adata['data']);
-					$message->attach($attachment);
+				    // check for "zip" requirements
+                    if (!empty($adata['zip'])) {
+                        $zipped[] = $adata;
+                    } else {
+                        $attachment = Swift_Attachment::newInstance()
+                            ->setFilename($adata['name'])
+                            ->setContentType($adata['type'])
+                            ->setBody($adata['data']);
+                        $message->attach($attachment);
+                    }
 				}
+				if (!empty($zipped)) {
+                    $zip = new ZipArchive();
+                    $fn = tempnam(sys_get_temp_dir(), uniqid());
+                    foreach ($zipped as $k=>$adata) {
+                        if ($zip->open($filename, ZipArchive::CREATE)===TRUE) {
+                            $zip->addFromString(($k+1).'_'.$adata['name'], $adata['data']);
+                        }
+                    }
+                    $zip->close();
+                    $attachment = Swift_Attachment::newInstance()
+                        ->setFilename('archive.zip')
+                        ->setContentType('application/zip')
+                        ->setBody(file_get_contents($fn));
+                    $message->attach($attachment);
+                    unlink($fn);
+                }
 			}
 
 			$ret = $mailer->send($message);
