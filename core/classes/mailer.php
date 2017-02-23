@@ -122,7 +122,7 @@ class Mailer extends Config
                         $zip = new ZipArchive();
                         $fn = tempnam(sys_get_temp_dir(), uniqid());
                         if ($zip->open($fn, ZipArchive::CREATE) === TRUE) {
-                            $zip->addFromString(($k + 1) . '_' . $adata['name'], $adata['data']);
+                            $zip->addFromString($adata['name'], $adata['data']);
                             $zip->close();
                             $attachment = Swift_Attachment::newInstance()
                                 ->setFilename($adata['name'] . '.zip')
