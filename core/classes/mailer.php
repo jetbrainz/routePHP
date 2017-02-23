@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Description of mailer
  *
@@ -6,109 +7,106 @@
  */
 class Mailer extends Config
 {
-	const Q_MAIL = 'mail';
+    const Q_MAIL = 'mail';
 
-	public function __construct()
-	{
-		parent::__construct();
-		
-		$this->logger = new Logger(get_class());
-	}
-	
-	public function getSwiftMailer()
-	{
-		return $this->configureSwift($this->getConfig('transport'));
-	}
-	
-	private function configureSwift($transportName='mail')
-	{
-	    if (!class_exists('Swift')) {
+    public function __construct()
+    {
+        parent::__construct();
+
+        $this->logger = new Logger(get_class());
+    }
+
+    public function getSwiftMailer()
+    {
+        return $this->configureSwift($this->getConfig('transport'));
+    }
+
+    private function configureSwift($transportName = 'mail')
+    {
+        if (!class_exists('Swift')) {
             if ((@include 'swift_required.php') === false) {
                 require 'Swift/swift_required.php';
             }
         }
 
-		$opt = $this->getConfig('options');
-		
-		if ($transportName == 'smtp') {
-			$transport = Swift_SmtpTransport::newInstance($opt['host'], $opt['port'])
-				->setUsername($opt['username'])
-				->setPassword($opt['password'])
-				->setEncryption($opt['encryption'])
-				;
-		} elseif ($transportName == 'sendmail') {
-			$transport = Swift_SendmailTransport::newInstance();
-		} else {
-			$transport = Swift_MailTransport::newInstance();
-		}
+        $opt = $this->getConfig('options');
 
-		return Swift_Mailer::newInstance($transport);
+        if ($transportName == 'smtp') {
+            $transport = Swift_SmtpTransport::newInstance($opt['host'], $opt['port'])
+                ->setUsername($opt['username'])
+                ->setPassword($opt['password'])
+                ->setEncryption($opt['encryption']);
+        } elseif ($transportName == 'sendmail') {
+            $transport = Swift_SendmailTransport::newInstance();
+        } else {
+            $transport = Swift_MailTransport::newInstance();
+        }
 
-	}
-	
-	/**
-	 * Send email using Swift
-	 * @param string $address Email address to send to
-	 * @param string $subject Subject of email
-	 * @param string $text Message to send (HTML)
-	 * @param string $from Optional. From address. Leave empty to use "info@yourdomain.tld"
-	 * @param array $attachments Optional. ['name' => 'FILENAME', 'type' => 'MIME', 'data' => 'CONTENT']
-	 */
-	public function send($address, $subject, $text, $from=null, $text_only=false, $attachments=null)
-	{
-		if (!$from) {
-			$from = $this->getConfig('from');
-		}
-		
-		$to = $address;
+        return Swift_Mailer::newInstance($transport);
 
-		$header = $this->getVar ('emails', 'header');
-		$footer = $this->getVar ('emails', 'footer');
-		
-		$messageHTML = $header . ($text) . $footer;
-		
-		try {
-			
-			$mailer = $this->getSwiftMailer();
-			
-			$message = Swift_Message::newInstance($subject)
-					
-			// Set To
-			->setTo($to)
+    }
 
-			// Set From message
-			->setFrom($from);
-			
-			if ($bcc = $this->getConfig('bcc')) {
-				$message->setBcc($bcc);
-			}
-			
-			if (!$text_only) {
-				// Add images
-				if ($this->getConfig('images')) {
-					foreach ($this->getConfig('images') as $file=>$info) {
-						if (stristr($messageHTML, '"'.$info['src'].'"') !== false) {
-							$messageHTML = str_replace (
-								'"'.$info['src'].'"',
-								'"'.$message->embed(Swift_Image::fromPath(PATH_WWW.$file)).'"',
-								$messageHTML
-							);
-						}
-					}
-				}
+    /**
+     * Send email using Swift
+     * @param string $address Email address to send to
+     * @param string $subject Subject of email
+     * @param string $text Message to send (HTML)
+     * @param string $from Optional. From address. Leave empty to use "info@yourdomain.tld"
+     * @param array $attachments Optional. ['name' => 'FILENAME', 'type' => 'MIME', 'data' => 'CONTENT']
+     */
+    public function send($address, $subject, $text, $from = null, $text_only = false, $attachments = null)
+    {
+        if (!$from) {
+            $from = $this->getConfig('from');
+        }
 
-				// Set HTML message
-				$message
-					->setBody($messageHTML, 'text/html')
-					->addPart($text);
-			} else {
-				$message->setBody($text);
-			}
+        $to = $address;
 
-			if (!empty ($attachments)) {
-			    $zipped = [];
-				foreach ($attachments as $adata) {
-				    // check for "zip" requirements
+        $header = $this->getVar('emails', 'header');
+        $footer = $this->getVar('emails', 'footer');
+
+        $messageHTML = $header . ($text) . $footer;
+
+        try {
+
+            $mailer = $this->getSwiftMailer();
+
+            $message = Swift_Message::newInstance($subject)
+                // Set To
+                ->setTo($to)
+                // Set From message
+                ->setFrom($from);
+
+            if ($bcc = $this->getConfig('bcc')) {
+                $message->setBcc($bcc);
+            }
+
+            if (!$text_only) {
+                // Add images
+                if ($this->getConfig('images')) {
+                    foreach ($this->getConfig('images') as $file => $info) {
+                        if (stristr($messageHTML, '"' . $info['src'] . '"') !== false) {
+                            $messageHTML = str_replace(
+                                '"' . $info['src'] . '"',
+                                '"' . $message->embed(Swift_Image::fromPath(PATH_WWW . $file)) . '"',
+                                $messageHTML
+                            );
+                        }
+                    }
+                }
+
+                // Set HTML message
+                $message
+                    ->setBody($messageHTML, 'text/html')
+                    ->addPart($text);
+            } else {
+                $message->setBody($text);
+            }
+
+            if (!empty ($attachments)) {
+                $zipped = [];
+                foreach ($attachments as $adata) {
+                    // check for "zip" requirements
                     if (!empty($adata['zip'])) {
                         $zipped[] = $adata;
                     } else {
@@ -118,47 +116,47 @@ class Mailer extends Config
                             ->setBody($adata['data']);
                         $message->attach($attachment);
                     }
-				}
-				if (!empty($zipped)) {
-                    $zip = new ZipArchive();
-                    $fn = tempnam(sys_get_temp_dir(), uniqid());
-                    foreach ($zipped as $k=>$adata) {
-                        if ($zip->open($filename, ZipArchive::CREATE)===TRUE) {
-                            $zip->addFromString(($k+1).'_'.$adata['name'], $adata['data']);
-                        }
-                    }
-                    $zip->close();
-                    $attachment = Swift_Attachment::newInstance()
-                        ->setFilename('archive.zip')
-                        ->setContentType('application/zip')
-                        ->setBody(file_get_contents($fn));
-                    $message->attach($attachment);
-                    unlink($fn);
                 }
-			}
+                if (!empty($zipped)) {
+                    foreach ($zipped as $k => $adata) {
+                        $zip = new ZipArchive();
+                        $fn = tempnam(sys_get_temp_dir(), uniqid());
+                        if ($zip->open($fn, ZipArchive::CREATE) === TRUE) {
+                            $zip->addFromString(($k + 1) . '_' . $adata['name'], $adata['data']);
+                            $zip->close();
+                            $attachment = Swift_Attachment::newInstance()
+                                ->setFilename($adata['name'] . '.zip')
+                                ->setContentType('application/zip')
+                                ->setBody(file_get_contents($fn));
+                            $message->attach($attachment);
+                        }
+                        unlink($fn);
+                    }
+                }
+            }
 
-			$ret = $mailer->send($message);
-			
-			$this->logger->debug('Sent email to: '.$to.': '.(!$ret?'Error':'OK'));
-		} catch (\Exception $e) {
-			
-			$this->logger->error('Mailer error: '.$e->getMessage());
-		}
-	}
-	
-	public function queueRun($task)
-	{
-		$i = unserialize($task['params']);
-		
-		$this->send(
-				$i['email_address'], 
-				$i['email_subject'], 
-				$i['email_html'], 
-				empty($i['email_from']) ? null : $i['email_from'], 
-				!empty($i['text_only']),
-				empty($i['email_attachments']) ? null : $i['email_attachments']
-		);
-		
-		return true;
-	}
+            $ret = $mailer->send($message);
+
+            $this->logger->debug('Sent email to: ' . $to . ': ' . (!$ret ? 'Error' : 'OK'));
+        } catch (\Exception $e) {
+
+            $this->logger->error('Mailer error: ' . $e->getMessage());
+        }
+    }
+
+    public function queueRun($task)
+    {
+        $i = unserialize($task['params']);
+
+        $this->send(
+            $i['email_address'],
+            $i['email_subject'],
+            $i['email_html'],
+            empty($i['email_from']) ? null : $i['email_from'],
+            !empty($i['text_only']),
+            empty($i['email_attachments']) ? null : $i['email_attachments']
+        );
+
+        return true;
+    }
 }
