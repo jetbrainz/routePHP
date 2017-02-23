@@ -12,10 +12,12 @@ class Curl
 		curl_setopt($ch, CURLOPT_POST, true);
 		curl_setopt($ch, CURLOPT_USERAGENT, $agent);
 		
-		//curl_setopt($ch, CURLOPT_VERBOSE, true);
+		$contentLength = 0;
 		
 		if (!empty($params))
 		{
+			$postdata = is_array($params) ? http_build_query($params) : $params;
+			$contentLength = strlen($postdata);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($params) ? http_build_query($params) : $params);
 		}
 
@@ -25,10 +27,14 @@ class Curl
 			curl_setopt($ch, CURLOPT_USERPWD, $auth['username'] . ':' . $auth['password']);
 		}
 
-		if (!empty($headers))
+		if (empty($headers))
 		{
-			curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+			$headers = [];
 		}
+		
+		$headers[] = 'Content-Length: ' . $contentLength;
+		
+		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		
 		return curl_exec($ch);
 	}
