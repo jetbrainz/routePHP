@@ -18,7 +18,7 @@ class Curl
 		{
 			$postdata = is_array($params) ? http_build_query($params) : $params;
 			$contentLength = strlen($postdata);
-			curl_setopt($ch, CURLOPT_POSTFIELDS, is_array($params) ? http_build_query($params) : $params);
+			curl_setopt($ch, CURLOPT_POSTFIELDS, $postdata);
 		}
 
 		if (!empty($auth['username']) && !empty($auth['password']))
