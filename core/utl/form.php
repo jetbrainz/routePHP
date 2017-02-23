@@ -4,8 +4,6 @@
  *
  ** @author Valentin Balt <valentin.balt@gmail.com>
  */
-use PFBC;
-
 class Form
 {
 	const ELEMENTS = 'elements';
