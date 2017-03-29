@@ -32,12 +32,12 @@ class Mailer extends Config
         $opt = $this->getConfig('options');
 
         if ($transportName == 'smtp') {
-            $transport = Swift_SmtpTransport::newInstance($opt['host'], $opt['port'])
+            $transport = (new Swift_SmtpTransport($opt['host'], $opt['port']))
                 ->setUsername($opt['username'])
                 ->setPassword($opt['password'])
                 ->setEncryption($opt['encryption']);
         } else {
-            $transport = Swift_SendmailTransport::newInstance();
+            $transport = new Swift_SendmailTransport();
         }
 
         return Swift_Mailer::newInstance($transport);
