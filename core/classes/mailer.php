@@ -36,10 +36,8 @@ class Mailer extends Config
                 ->setUsername($opt['username'])
                 ->setPassword($opt['password'])
                 ->setEncryption($opt['encryption']);
-        } elseif ($transportName == 'sendmail') {
-            $transport = Swift_SendmailTransport::newInstance();
         } else {
-            $transport = Swift_MailTransport::newInstance();
+            $transport = Swift_SendmailTransport::newInstance();
         }
 
         return Swift_Mailer::newInstance($transport);
