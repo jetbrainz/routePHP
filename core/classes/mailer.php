@@ -40,7 +40,7 @@ class Mailer extends Config
             $transport = new Swift_SendmailTransport();
         }
 
-        return Swift_Mailer::newInstance($transport);
+        return new Swift_Mailer($transport);
 
     }
 
