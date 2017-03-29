@@ -69,7 +69,7 @@ class Mailer extends Config
 
             $mailer = $this->getSwiftMailer();
 
-            $message = Swift_Message::newInstance($subject)
+            $message = (new Swift_Message($subject))
                 // Set To
                 ->setTo($to)
                 // Set From message
@@ -108,7 +108,7 @@ class Mailer extends Config
                     if (!empty($adata['zip'])) {
                         $zipped[] = $adata;
                     } else {
-                        $attachment = Swift_Attachment::newInstance()
+                        $attachment = (new Swift_Attachment())
                             ->setFilename($adata['name'])
                             ->setContentType($adata['type'])
                             ->setBody($adata['data']);
@@ -122,7 +122,7 @@ class Mailer extends Config
                         if ($zip->open($fn, ZipArchive::CREATE) === TRUE) {
                             $zip->addFromString($adata['name'], $adata['data']);
                             $zip->close();
-                            $attachment = Swift_Attachment::newInstance()
+                            $attachment = (new Swift_Attachment())
                                 ->setFilename($adata['name'] . '.zip')
                                 ->setContentType('application/zip')
                                 ->setBody(file_get_contents($fn));
