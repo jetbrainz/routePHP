@@ -28,7 +28,16 @@ if(in_array("__autoload", spl_autoload_functions()))
 
 define ('PATH_CORE', __DIR__);
 
-define ('REMOTE_ADDR', !empty($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+define (
+	'REMOTE_ADDR', 
+	!empty ($_SERVER['HTTP_X_FORWARDED_FOR'])
+	? $_SERVER['HTTP_X_FORWARDED_FOR']
+	: (
+		!empty ($_SERVER['REMOTE_ADDR'])
+		? $_SERVER['REMOTE_ADDR']
+		: ''
+	)
+);
 define ('PATH_ETC', realpath(PATH_APP.'/etc'));
 define ('PATH_CLASSES', realpath(PATH_CORE.'/classes'));
 define ('PATH_MODULES', realpath(PATH_APP.'/modules'));
