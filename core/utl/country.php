@@ -23,11 +23,8 @@ class Country
 	
 	static public function getCodeByIP($ip=null)
 	{
-
 		if ($ip === null) {
-			$ip = !empty($_SERVER['HTTP_X_FORWARDED_FOR'])
-				? $_SERVER['HTTP_X_FORWARDED_FOR']
-				: $_SERVER['REMOTE_ADDR'];
+			$ip = REMOTE_ADDR;
 		}
 
 		if (!$ip) {
