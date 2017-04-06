@@ -28,16 +28,20 @@ if(in_array("__autoload", spl_autoload_functions()))
 
 define ('PATH_CORE', __DIR__);
 
-define (
-	'REMOTE_ADDR', 
+$remoteIP = 
 	!empty ($_SERVER['HTTP_X_FORWARDED_FOR'])
 	? $_SERVER['HTTP_X_FORWARDED_FOR']
 	: (
 		!empty ($_SERVER['REMOTE_ADDR'])
 		? $_SERVER['REMOTE_ADDR']
 		: ''
-	)
-);
+	);
+}
+if (filter_var($remoteIP, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
+	$remoteIP = file_get_contents('https://api.ipify.org'));
+}
+define ('REMOTE_ADDR', $remoteIP);
+
 define ('PATH_ETC', realpath(PATH_APP.'/etc'));
 define ('PATH_CLASSES', realpath(PATH_CORE.'/classes'));
 define ('PATH_MODULES', realpath(PATH_APP.'/modules'));
