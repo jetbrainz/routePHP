@@ -36,7 +36,6 @@ $remoteIP =
 		? $_SERVER['REMOTE_ADDR']
 		: ''
 	);
-}
 if (filter_var($remoteIP, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE)) {
 	$remoteIP = file_get_contents('https://api.ipify.org'));
 }
