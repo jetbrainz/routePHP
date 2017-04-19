@@ -96,7 +96,7 @@ try
 		//new Dispatcher('tests');
 	}
 	if (\RunLevel::isSCHEDULER()) {
-	    $logger = new \Logger('scheduler');
+	    //$logger = new \Logger('scheduler');
 		$daemon = false;
 		$daemon_task = false;
 		$args = '';
@@ -114,22 +114,22 @@ try
 		}
 
 		if ($daemon) {
-            $logger->debug("Scheduler started as daemon");
+            //$logger->debug("Scheduler started as daemon");
 			$q = new Queue();
 			$tn = $q->getTaskNames();
 			foreach ($tn as $task) {
 				exec('ps auxwww|grep "'.PATH_APP.' ' .$task.' daemon_task"|grep -v grep', $output);
 				if (empty ($output)) {
-                    $logger->debug("Scheduler TASK was not found, start daemon_task...");
+                    //$logger->debug("Scheduler TASK was not found, start daemon_task...");
 					$exec = __DIR__.'/scheduler.php '.PATH_APP.' ' .$task.' daemon_task '.$args.' >/dev/null 2>&1 &';
 					system($exec);
 				} else {
-                    $logger->debug("Scheduler TASK already started: ".$output);
+                   //$logger->debug("Scheduler TASK already started: ".$output);
                 }
 			}
 		} elseif ($daemon_task) {
 			do {
-                $logger->debug("Scheduler started as daemon_task with arguments: ".$args);
+                //$logger->debug("Scheduler started as daemon_task with arguments: ".$args);
 				$q = new Queue();
 				// Fresh copy of script each time
 				$exec = __DIR__.'/scheduler.php '.PATH_APP.' ' .$args;
@@ -138,7 +138,7 @@ try
 				sleep(1);
 			} while(1);
 		} else {
-            $logger->debug("Scheduler started as queue processor");
+            //$logger->debug("Scheduler started as queue processor");
 			$q = new Queue();
 			$task = null;
 			if (!empty($argv[2])) {
@@ -148,7 +148,7 @@ try
 				}
 			}
 			for ($i=0;$i<10;$i++) {
-                $logger->debug("Run queue: ".json_encode($task));
+                //$logger->debug("Run queue: ".json_encode($task));
 				$q->run($task);
 			}
 		}
