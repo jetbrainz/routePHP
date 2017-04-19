@@ -30,9 +30,6 @@ class Logger extends Config
 
 		$this->log = new Monolog\Logger($className);
 		
-        	$this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
-	        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
-
         	if (!empty($gelf)) {
             		$gelfHandler = new Monolog\Handler\GelfHandler(
                 		new Gelf\Publisher(
@@ -42,7 +39,11 @@ class Logger extends Config
             		);
 
             		$this->log->pushHandler($gelfHandler);
-	        }
+			
+	        } else {
+	        	$this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/'.$logName, Monolog\Logger::DEBUG));
+		        $this->log->pushHandler(new Monolog\Handler\StreamHandler(PATH_LOG.'/errors', Monolog\Logger::ERROR));
+		}
 	}
 	
 	public function __call($method, $args)
