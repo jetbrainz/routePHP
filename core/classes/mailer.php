@@ -96,7 +96,7 @@ class Mailer extends Config
                 // Set HTML message
                 $message
                     ->setBody($messageHTML, 'text/html')
-                    ->addPart($text);
+                    ->addPart(strip_tags($text));
             } else {
                 $message->setBody($text);
             }
