@@ -7,20 +7,22 @@
  */
 class Config
 {
+    const DS = DIRECTORY_SEPARATOR;
+
 	protected $config = array();
 	
     public function __construct()
     {
-        $class = strtolower(str_replace('\\', '/', get_class($this)));
+        $class = strtolower(str_replace('\\', DS, get_class($this)));
 
         if (defined ('BRAND')) {
-            $file_brand = PATH_ETC.'/brands/'.BRAND.'/'.$class.'.php';
+            $file_brand = PATH_ETC.DS.'brands'.DS.BRAND.DS.$class.'.php';
         }
-        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.'/'.$class.'.local.php')) {
+        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.DS.$class.'.local.php')) {
             // Try to load dev (local) config if exists and DEVMODE = true
-            $file = PATH_ETC.'/'.$class.'.local.php';
+            $file = PATH_ETC.DS.$class.'.local.php';
         } else {
-            $file = PATH_ETC.'/'.$class.'.php';
+            $file = PATH_ETC.DS.$class.'.php';
         }
 
         $local_config = array ();
@@ -36,9 +38,9 @@ class Config
         }
 
         if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.'/global.local.php')) {
-            $file = PATH_ETC.'/global.local.php';
+            $file = PATH_ETC.DS.'global.local.php';
         } else {
-            $file = PATH_ETC.'/global.php';
+            $file = PATH_ETC.DS.'global.php';
         }
 
         if (file_exists($file)) {
@@ -65,17 +67,17 @@ class Config
 	{
 		$path = array ();
 
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.str_replace('\\', '/', strtolower(get_class($this))).'/'.$name);
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.str_replace('\\', '/', strtolower(get_class($this))).'/'.BRAND.'/'.$name);
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.$name);
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.BRAND.'/'.$name);
+		$path[] = realpath(PATH_VAR.DS.$group.DS.str_replace('\\', DS, strtolower(get_class($this))).DS.$name);
+		$path[] = realpath(PATH_VAR.DS.$group.DS.str_replace('\\', DS, strtolower(get_class($this))).DS.BRAND.DS.$name);
+		$path[] = realpath(PATH_VAR.DS.$group.DS.$name);
+		$path[] = realpath(PATH_VAR.DS.$group.DS.BRAND.DS.$name);
 		
 		foreach ($path as $p) {
 			if (!$p) {
 				continue;
 			}
 			if ($lang) {
-				$pl = str_replace('/'.$name, '/'.$lang.'/'.$name, $p);
+				$pl = str_replace(DS.$name, DS.$lang.DS.$name, $p);
 				if (($ret = $this->returnVar($pl)) !== null) {
 					return $ret;
 				}
