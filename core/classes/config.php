@@ -11,6 +11,11 @@ class Config
 
 	protected $config = array();
 	
+    /**
+     * __construct method
+     *
+     * @return void
+     */
     public function __construct()
     {
         $class = strtolower(str_replace('\\', DS, get_class($this)));
