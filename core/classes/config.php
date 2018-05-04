@@ -7,20 +7,27 @@
  */
 class Config
 {
+    const DS = DIRECTORY_SEPARATOR;
+
 	protected $config = array();
 	
+    /**
+     * __construct method
+     *
+     * @return void
+     */
     public function __construct()
     {
-        $class = strtolower(str_replace('\\', '/', get_class($this)));
+        $class = strtolower(str_replace('\\', self::DS, get_class($this)));
 
         if (defined ('BRAND')) {
-            $file_brand = PATH_ETC.'/brands/'.BRAND.'/'.$class.'.php';
+            $file_brand = PATH_ETC.self::DS.'brands'.self::DS.BRAND.self::DS.$class.'.php';
         }
-        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.'/'.$class.'.local.php')) {
+        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.self::DS.$class.'.local.php')) {
             // Try to load dev (local) config if exists and DEVMODE = true
-            $file = PATH_ETC.'/'.$class.'.local.php';
+            $file = PATH_ETC.self::DS.$class.'.local.php';
         } else {
-            $file = PATH_ETC.'/'.$class.'.php';
+            $file = PATH_ETC.self::DS.$class.'.php';
         }
 
         $local_config = array ();
@@ -35,10 +42,10 @@ class Config
             $local_config = array_merge_recursive_distinct ($local_config, $config);
         }
 
-        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.'/global.local.php')) {
-            $file = PATH_ETC.'/global.local.php';
+        if (defined('DEVMODE') && DEVMODE && file_exists(PATH_ETC.self::DS.'global.local.php')) {
+            $file = PATH_ETC.self::DS.'global.local.php';
         } else {
-            $file = PATH_ETC.'/global.php';
+            $file = PATH_ETC.self::DS.'global.php';
         }
 
         if (file_exists($file)) {
@@ -65,17 +72,17 @@ class Config
 	{
 		$path = array ();
 
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.str_replace('\\', '/', strtolower(get_class($this))).'/'.$name);
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.str_replace('\\', '/', strtolower(get_class($this))).'/'.BRAND.'/'.$name);
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.$name);
-		$path[] = realpath(PATH_VAR.'/'.$group.'/'.BRAND.'/'.$name);
+		$path[] = realpath(PATH_VAR.self::DS.$group.self::DS.str_replace('\\', self::DS, strtolower(get_class($this))).self::DS.$name);
+		$path[] = realpath(PATH_VAR.self::DS.$group.self::DS.str_replace('\\', self::DS, strtolower(get_class($this))).self::DS.BRAND.self::DS.$name);
+		$path[] = realpath(PATH_VAR.self::DS.$group.self::DS.$name);
+		$path[] = realpath(PATH_VAR.self::DS.$group.self::DS.BRAND.self::DS.$name);
 		
 		foreach ($path as $p) {
 			if (!$p) {
 				continue;
 			}
 			if ($lang) {
-				$pl = str_replace('/'.$name, '/'.$lang.'/'.$name, $p);
+				$pl = str_replace(self::DS.$name, self::DS.$lang.self::DS.$name, $p);
 				if (($ret = $this->returnVar($pl)) !== null) {
 					return $ret;
 				}
