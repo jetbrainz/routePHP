@@ -41,18 +41,21 @@ class Mailer extends Config
         }
 
         return new Swift_Mailer($transport);
-
     }
 
     /**
      * Send email using Swift
+     *
      * @param string $address Email address to send to
      * @param string $subject Subject of email
      * @param string $text Message to send (HTML)
      * @param string $from Optional. From address. Leave empty to use "info@yourdomain.tld"
+     * @param bool $text_only to send only text
      * @param array $attachments Optional. ['name' => 'FILENAME', 'type' => 'MIME', 'data' => 'CONTENT']
+     * @param string $lang to use to find email template
+     * @return void
      */
-    public function send($address, $subject, $text, $from = null, $text_only = false, $attachments = null)
+    public function send($address, $subject, $text, $from = null, $text_only = false, $attachments = null, $lang = null)
     {
         if (!$from) {
             $from = $this->getConfig('from');
@@ -60,13 +63,12 @@ class Mailer extends Config
 
         $to = $address;
 
-        $header = $this->getVar('emails', 'header');
-        $footer = $this->getVar('emails', 'footer');
+        $header = $this->getVar('emails', 'header', $lang);
+        $footer = $this->getVar('emails', 'footer', $lang);
 
         $messageHTML = $header . ($text) . $footer;
 
         try {
-
             $mailer = $this->getSwiftMailer();
 
             $message = (new Swift_Message($subject))
@@ -115,6 +117,7 @@ class Mailer extends Config
                         $message->attach($attachment);
                     }
                 }
+
                 if (!empty($zipped)) {
                     foreach ($zipped as $k => $adata) {
                         $zip = new ZipArchive();
@@ -137,7 +140,6 @@ class Mailer extends Config
 
             $this->logger->debug('Sent email to: ' . $to . ': ' . (!$ret ? 'Error' : 'OK'));
         } catch (\Exception $e) {
-
             $this->logger->error('Mailer error: ' . $e->getMessage());
         }
     }
@@ -152,7 +154,8 @@ class Mailer extends Config
             $i['email_html'],
             empty($i['email_from']) ? null : $i['email_from'],
             !empty($i['text_only']),
-            empty($i['email_attachments']) ? null : $i['email_attachments']
+            empty($i['email_attachments']) ? null : $i['email_attachments'],
+            !empty($i['lang']) ? $i['lang'] : ''
         );
 
         return true;
