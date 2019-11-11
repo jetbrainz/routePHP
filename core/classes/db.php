@@ -26,13 +26,13 @@ class DB
 			try {
 				self::$instances[$hash] = new PDO($dsn, $username, $password, $options);
 				self::$instances[$hash]->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_WARNING);
+			
+				return self::$instances[$hash];
 			} catch (\Exception $e) {
 				// TODO: make this visible
 				//print_r ($e);
 			}
 		}
-			
-		return self::$instances[$hash];
 	}
 	
 	static public function getNewInstance($dsn, $username, $password, $options)
