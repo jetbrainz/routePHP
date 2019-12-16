@@ -17,6 +17,14 @@ class DB
 	static public function getInstance($dsn, $username, $password, $options)
 	{
 		$hash = md5($dsn . $username . $password);
+		
+		if (
+			isset(self::$instances[$hash])
+			&& self::$instances[$hash] instanceof PDO
+		) {
+			return self::$instances[$hash];
+		}
+		
 		if (!is_array ($options)) {
 			$options = array ();
 		}
