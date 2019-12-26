@@ -27,9 +27,11 @@ class Menu {
 				$haveActive = $link;
 			}
 			$menu .= 
-				'<li' .
-				(($haveActive == $link) ? ' class="active"' : '' ) .
-				'><a href="' . $link . '">' . $text . '</a>' .
+				'<li class="nav-item' .
+				(($haveActive == $link) ? ' active' : '' ) .
+				'"><a class="nav-link' .
+				(($haveActive == $link) ? ' active' : '' ) .
+				'" href="' . $link . '">' . $text . '</a>' .
 				'</li>';
 		}
 		$menu .= '</ul>';
