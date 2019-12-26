@@ -91,6 +91,10 @@ class Form
 			} elseif ($form['form']['controlWidth']) {
 				$el['properties']['controlWidth'] = $form['form']['controlWidth'];
 			}
+			if ($form['form']['elementWidth']) {
+				$el['properties']['elementWidth'] = $form['form']['elementWidth'];
+			}
+
 			if (isset($el['properties']['required']) && !$el['properties']['required']) {
 				unset ($el['properties']['required']);
 			}
