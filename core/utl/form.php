@@ -91,7 +91,7 @@ class Form
 			} elseif ($form['form']['controlWidth']) {
 				$el['properties']['controlWidth'] = $form['form']['controlWidth'];
 			}
-			if ($form['form']['elementWidth']) {
+			if (!isset($el['properties']['elementWidth']) && !empty($form['form']['elementWidth'])) {
 				$el['properties']['elementWidth'] = $form['form']['elementWidth'];
 			}
 
